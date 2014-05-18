@@ -1,0 +1,85 @@
+#ifndef PLATFORM_H_
+#define PLATFORM_H_
+
+#include "config.h"
+#include <string>
+#include <log4cpp/Category.hh>
+#undef int64_t
+
+#define LOKI_OBJECT_LEVEL_THREADING
+
+#include <loki/Singleton.h>
+
+#include <unordered_map>
+
+#if defined USE_MATLAB
+#include <engine.h>
+#endif
+
+namespace core
+{
+	using namespace std;
+
+	class config_item
+	{
+	};
+
+	class POCO_EXPORT platform_
+	{
+	private:
+
+		string running_name;
+#if defined USE_MATLAB
+		Engine *ep;
+#endif
+
+		unordered_map<string,shared_ptr<config_item> > config;
+		
+		//int train_valid_pair_id;
+		//int train_test_pair_id;
+
+	public:
+
+		platform_();
+		~platform_(void);
+
+		void init(const string & running_name);
+
+		void shutdown();
+
+		const string  & get_running_name();
+
+		log4cpp::Category& get_output_log();
+		log4cpp::Category& get_running_log();
+		log4cpp::Category& get_debug_log();
+#if defined USE_MATLAB
+		Engine * get_matlab_eigen();
+#endif
+		
+		shared_ptr<config_item> get_config(const string & key);
+		
+		void set_config(const string & key, const shared_ptr<config_item> & config);
+
+		//void set_train_valid_pair_id(int train_valid_pair_id_)
+		//{
+		//	train_valid_pair_id = train_valid_pair_id_;
+		//}
+		//int set_train_test_pair_id(int train_test_pair_id_)
+		//{
+		//	train_test_pair_id = train_test_pair_id_;
+
+		//}
+	};
+
+	typedef Loki::SingletonHolder<platform_,
+	  Loki::CreateUsingNew,
+	  Loki::DefaultLifetime,
+	  Loki::ClassLevelLockable
+	> platform;
+
+}
+
+
+
+#endif
+

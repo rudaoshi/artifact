@@ -1,0 +1,89 @@
+#include <liblearning/deep/mlp_layer.h>
+
+using namespace deep;
+
+
+int mlp_layer::get_input_dim()
+{
+	return imput_dim;
+}
+
+
+int mlp_layer::get_output_dim()
+{
+	return output_dim;
+}
+
+MatrixMapType mlp_layer::get_W()
+{
+	return W;
+}
+
+
+MatrixMapType mlp_layer::get_diff_W()
+{
+	return diff_W;
+}
+
+VectorMapType mlp_layer::get_b()
+{
+	return b;
+}
+
+VectorMapType mlp_layer::get_diff_b()
+{
+	return diff_b;
+}
+
+MatrixType mlp_layer::get_activation()
+{
+	if (!record_activation)
+	{
+		throw runtime_error("the activation is not recorded");
+	}
+	return activation;
+}
+
+
+MatrixType mlp_layer::get_output()
+{
+	if (!record_output)
+	{
+		throw runtime_error("the output is not recorded");
+	}
+	return output;
+}
+
+mlp_layer::mlp_layer(int input_dim_, int output_dim_, bool record_output_, bool record_activation_)
+: input_dim(input_dim_), output_dim(output_dim_),record_output(record_output_),record_activation(record_activation_)
+{
+
+}
+
+void mlp_layer::bind_network_param_space(const MatrixMapType & W, const MatrixMapType & b, const MatrixMapType & diff_W, const MatrixMapType & diff_b)
+{
+
+}
+
+ void mlp_layer::backprop_diff(const MatrixType & input, const MatrixType & delta)
+ {
+
+	//dWb_mat = delta*[self.layered_output{2*num_maps}', ones(N,1)];
+
+#if defined USE_PARTIAL_GPU
+	GPUMatrixType gDelta = delta, gInput = input, gDiffw;
+	GPUVectorType gDiffb;
+
+	gDiffw = gDelta*gInput.transpose();
+	gDiffb = gDelta.rowwise().sum();
+
+	diff_W = (MatrixType) gDiffw;
+	diff_b = (VectorType) gDiffb;
+
+#else
+	diff_W.noalias() = delta*input.transpose();
+	diff_b.noalias() = delta.rowwise().sum();
+#endif
+
+
+}
