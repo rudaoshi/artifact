@@ -1,10 +1,10 @@
-#include <liblearning/deep/linear_layer.h>
+#include <deeplearning/network/layer/linear_layer.h>
 
-using namespace deep;
+using namespace deeplearning;
 
 
-linear_layer::linear_layer（int input_dim, int output_dim, bool record_output_ , bool record_activation_ )
-:bp_layer( input_dim, output_dim, record_output_,record_activation_)
+linear_layer::linear_layer(int input_dim,int output_dim)
+    : backpropagation_layer( input_dim, output_dim)
 {
 }
 
@@ -92,21 +92,22 @@ VectorType linear_layer::predict(const VectorType & x)
 
 }
 
-MatrixType linear_layer::compute_delta()
+MatrixType linear_layer::compute_delta(const MatrixType & input, const MatrixType & output)
 {
-	return this->gradient(this->input);
+    return this->cost_gradient(output);
 }
 
-void linear_layer::backprop_delta(MatrixType & delta)
+MatrixType linear_layer::backprop_delta(const MatrixType & delta, const MatrixType & input, const MatrixType & output)
 {
-	//delta = W{level}'*delta;
+    //delta = W{level}'*delta;
 
 #if defined USE_PARTIAL_GPU
 	GPUMatrixType gDelta = delta, gInput = input, gW = W,gResult;
 	gResult = gW.transpose()*gDelta;
-	delta = (MatrixType) gResult;
+	return (MatrixType) gResult;
 #else
-	delta =  W.transpose()*delta;
+    return W.transpose()*delta;
 
 #endif
 }
+

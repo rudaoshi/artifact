@@ -1,14 +1,8 @@
-/*
- * optimize_objective.h
- *
- *  Created on: 2010-6-19
- *      Author: sun
- */
 
 #ifndef OPTIMIZE_OBJECTIVE_H_
 #define OPTIMIZE_OBJECTIVE_H_
 
-#include <liblearning/core/config.h>
+#include <deeplearning/core/config.h>
 
 #include <tuple>
 using namespace std;
@@ -28,4 +22,4 @@ namespace deeplearning
 
 }
 
-#endif /* OPTIMIZE_OBJECTIVE_H_ */
+#endif

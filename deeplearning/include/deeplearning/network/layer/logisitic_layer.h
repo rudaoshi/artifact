@@ -2,27 +2,27 @@
 #define LOGISTIC_LAYER_H
 
 
-#include "bp_layer.h"
+#include "backpropagation_layer.h"
 
 namespace deeplearning
 {
-	class logistic_layer: public bp_layer
+	class logistic_layer: public backpropagation_layer
 	{
 	public:
 
-		logistic_layer(int input_dim, int output_dim, bool record_output = true, bool record_activation = false);
+		logistic_layer(int input_dim, int output_dim);
 
 		virtual MatrixType predict(const MatrixType & input);
 
 		virtual VectorType predict(const VectorType & input);
 
-		virtual void compute_gradient(const MatrixType & delta);
+        virtual MatrixType compute_delta(const MatrixType & input, const MatrixType & output);
 
-		virtual MatrixType compute_delta() = 0;
+        virtual MatrixType backprop_delta(const MatrixType & delta, const MatrixType & input, const MatrixType & output);
 
-		virtual void backprop_delta(MatrixType & delta) = 0;
 
-	};
+
+    };
 }
 
 #endif

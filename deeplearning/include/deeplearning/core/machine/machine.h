@@ -17,7 +17,7 @@ namespace deeplearning
 
 		virtual Machine train(
 			const typename sample_set_type<Machine::sample_type>::type & train_data
-			) = 0
+			) = 0;
 
 	};
 

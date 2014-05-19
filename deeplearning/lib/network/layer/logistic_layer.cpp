@@ -1,10 +1,10 @@
-#include <deeplearning/network/logistic_layer.h>
+#include <deeplearning/network/layer/logistic_layer.h>
 #include <deeplearning/util/matrix_util.h>
 
 
 
-logistic_layer::logistic_layer input_dim, int output_dim, bool record_output_ , bool record_activation_ )
-:bp_layer( input_dim, output_dim, record_output_,record_activation_)
+logistic_layer::logistic_layer(int input_dim, int output_dim)
+:backpropagation_layer( input_dim, output_dim)
 {
 }
 
@@ -62,42 +62,24 @@ VectorType logistic_layer::predict(const VectorType & x)
 #endif
 }
 
-MatrixType logistic_layer::compute_delta()
+
+MatrixType logistic_layer::compute_delta(const MatrixType & input, const MatrixType & output)
 {
-	//output_delta = 2/N*((Reconstruction - X).*Reconstruction.*(1-Reconstruction));
-
-#if defined USE_PARTIAL_GPU
-	GPUMatrixType gOutput = output, gErrorDiff = error_diff, gResult;
-
-	gResult = 1-gOutput.array();
-	gResult.array() *= gOutput.array();
-	gResult.array() *= gErrorDiff.array();
-
-	return (MatrixType) gResult;
-
-
-#else
-	MatrixType result = 1-output.array();
-	result.array()*= output.array();
-	result.array() *= self.gredient(input).array();
-	return result;
-#endif
+    //output_delta = 2/N*((Reconstruction - X).*Reconstruction.*(1-Reconstruction));
+    MatrixType result = 1-output.array();
+    result.array()*= output.array();
+    result.array() *= self->gradient(output).array();
+    return result;
 }
 
-void logistic_layer::backprop_delta(MatrixType & delta)
+MatrixType logistic_layer::backprop_delta(const MatrixType & delta, const MatrixType & input, const MatrixType & output)
 {
 
-#if defined USE_PARTIAL_GPU
-	GPUMatrixType gDelta = delta, gInput = input, gW = W, gResult;
+    MatrixType new_delta =  (W.transpose()*delta);
+    new_delta.array() *= input.array();
+    new_delta.array() *= (1 - input.array());
 
-	gResult = (gW.transpose()*gDelta);
-	gResult.array() *= gInput.array();
-	gResult.array() *= (1 - gInput.array());
-	delta =  (MatrixType) gResult ;
+    return new_delta
 
-#else
-	delta =  (W.transpose()*delta);
-	delta.array() *= input.array();
-	delta.array() *= (1 - input.array());
-#endif
 }
+

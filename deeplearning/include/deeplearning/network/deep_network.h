@@ -8,111 +8,101 @@
 #ifndef BP_NETWORK_H_
 #define BP_NETWORK_H_
 
-#include <deeplearning/core/dataset.h>
-#include <deeplearning/core/serialize.h>
-#include <deeplearning/network/neuron_type.h>
 
-#include <deeplearning/network/layerwise_initializer.h>
-#include <deeplearning/network/network_objective.h>
+#include <deeplearning/network/layer/backpropagation_layer.h>
 
-#include <deeplearning/core/maker.h>
-#include <deeplearning/core/feature_extractor.h>
-
-#include <deeplearning/optimization/optimizer.h>
-#include <deeplearning/core/evaluator.h>
-
-#include <deeplearning/machine/machine.h>
-#include <deeplearning/optimization/optimizable.h>
+#include <deeplearning/core/machine/machine.h>
+#include <deeplearning/core/optimization/optimizable.h>
 
 
 #include <vector>
 #include <memory>
+
 using namespace std;
 
 
+namespace network {
 
-namespace network
-{
+    struct network_network_param {
+        vector<int> structure;
+        vector<neuron_type> neuron_types;
 
-	struct network_network_param
-	{
-		vector<int> structure;
-		vector<neuron_type> neuron_types;
+        shared_ptr<layerwise_initializer> initializer;
 
-		shared_ptr<layerwise_initializer> initializer;
+        shared_ptr<network_objective> objective;
 
-		shared_ptr<network_objective> objective;
+        shared_ptr<optimization::optimizer> finetune_optimizer;
 
-		shared_ptr<optimization::optimizer> finetune_optimizer;
+        shared_ptr<evaluator<NumericType> > perf_evaluator;
 
-		shared_ptr<evaluator<NumericType> > perf_evaluator;
+        int batch_size;
 
-		int batch_size;
+        int iter_per_batch;
 
-		int iter_per_batch;
+        int finetune_iter_num;
 
-		int finetune_iter_num;
+        int code_layer_id;
 
-		int code_layer_id;
+    };
 
-	};
+    
+    struct batch_layer_output
+    {
+        NumericType cost;
+        MatrixType output;
+    };
+    
 
 //	using Eigen::Map;
 
-	class deep_network: public machine<VectorType, VectorType>,
+    class deep_network : public machine<VectorType, VectorType>,
                     public gradient_optimizable<MatrixType, VectorType>
                     public parameterized<VectorType>
-	{
+    {
 
 
-	protected:
+    protected:
 
 // layers
-		vector<bp_layer > layers;
+        vector<backpropagation_layer > layers;
 
-    void feed_forward(const MatrixType & X);
-    void back_propagate();
+        vector<batch_layer_output> feed_forward(const MatrixType &input);
 
-	public:
+        vector<VectorType> back_propagate(const MatrixType & input, const vector<batch_layer_output> & laywise_output);
 
-	    void add_layer(const bp_layer & layer);
-      void remove_layer(int pos);
+    public:
 
-	    bp_layer & get_layer(int pos);
+        void add_layer(const bp_layer &layer);
 
-	public:
+        void remove_layer(int pos);
+
+        backpropagation_layer & get_layer(int pos);
+
+    public:
 
 
-		int get_layer_num();
+        int get_layer_num();
 
-		const MatrixType & get_layered_input(int id);
 
-		const MatrixType & get_layered_output(int id);
-
-	public:
+    public:
 
 //		network_auto_encoder(const vector<int>& structure,  const vector<neuron_type>& neuron_type);
 
-		bp_network(const bp_network & net_);
-		bp_network();
-		virtual ~bp_network();
+        deep_network(const deep_network &net_);
+
+        deep_network();
+
+        virtual ~deep_network();
 
 
-#pragma region Implementing Interface For machine
+        virtual NumericType cost(const MatrixType & traindata) = 0;
 
-		virtual VectorType predict(const VectorType & data) = 0;
-    virtual MatrixType predict(const MatrixType & data) = 0;
-
-
-#pragma endregion
+        virtual VectorType param_gradient(const MatrixType & traindata) = 0;
+        
+        virtual VectorType cost_gradient(const MatrixType & traindata) = 0;
 
 
-    virtual NumicalType objective(const InputDataSetType & traindata) = 0;
-
-    virtual ParameterType gradient(const InputDataSetType & testdata) = 0;
-
-
-	};
+    };
 }
 
 #endif /* BP_NETWORK_H_ */
