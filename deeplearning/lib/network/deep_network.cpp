@@ -5,7 +5,7 @@
 *      Author: sun
 */
 
-#include <liblearning/deep/deep_auto_encoder.h>
+#include <deeplearning/network/deep_network.h>
 #include <cassert>
 
 #include <liblearning/util/math_util.h>
@@ -34,12 +34,30 @@
 
 #include <boost/filesystem.hpp>
 
-using namespace core;
+
 using namespace std;
 
-namespace deeplearning
-{
+using namespace deeplearning;
 
+    
+vector<batch_layer_output> deep_network::feed_forward(const MatrixType &input)
+{
+    vector<batch_layer_output> result;
+    MatrixType cur_layer_input = input;
+    for (int i=0; i<layers.size(); i++)
+    {
+        batch_layer_output cur_layer_out;
+        cur_layer_out.output = layers[i].predict(cur_layer_input);
+        cur_layer_out.cost = layers[i].cost(cur_layer_input);
+        
+        result.push_back(cur_layer_out);
+    }
+}
+    
+vector<VectorType> deep_network::back_propagate(const MatrixType & input, const vector<batch_layer_output> & laywise_output)
+{
+    
+}
 
 // 	deep_auto_encoder::deep_auto_encoder(const std::vector<int>& structure_,  const std::vector<neuron_type>& neuron_types_)
 // 	{
