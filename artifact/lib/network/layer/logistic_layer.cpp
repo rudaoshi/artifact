@@ -64,7 +64,8 @@ VectorType logistic_layer::predict(const VectorType & x)
 }
 
 
-MatrixType logistic_layer::compute_delta(const MatrixType & input, const MatrixType & output)
+MatrixType logistic_layer::compute_delta(const MatrixType & input,
+        const MatrixType & output)
 {
     //output_delta = 2/N*((Reconstruction - X).*Reconstruction.*(1-Reconstruction));
 
@@ -72,13 +73,15 @@ MatrixType logistic_layer::compute_delta(const MatrixType & input, const MatrixT
     {
         throw runtime_error("The layer is not assigned with an objective.");
     }
-    MatrixType result = 1-output.array();
+    MatrixType result = less_func->gradient(output);
     result.array()*= output.array();
-    result.array() *= object->cost_gradient(output).array();
+    result.array() *= (1-output.array());
     return result;
 }
 
-MatrixType logistic_layer::backprop_delta(const MatrixType & delta, const MatrixType & input, const MatrixType & output)
+MatrixType logistic_layer::backprop_delta(const MatrixType & delta,
+        const MatrixType & input,
+        const MatrixType & output)
 {
 
     MatrixType new_delta =  (W.transpose()*delta);

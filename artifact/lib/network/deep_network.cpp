@@ -40,178 +40,51 @@ using namespace std;
 using namespace artifact::network;
 
     
-vector<batch_layer_output> deep_network::feed_forward(const MatrixType &input)
+vector<MatrixType> deep_network::feed_forward(const MatrixType &input)
 {
-    vector<batch_layer_output> result;
+    vector<MatrixType> result;
     MatrixType cur_layer_input = input;
     for (int i=0; i<layers.size(); i++)
     {
-        batch_layer_output cur_layer_out;
-        cur_layer_out.output = layers[i].predict(cur_layer_input);
-        cur_layer_out.cost = layers[i].cost(cur_layer_input);
-        
-        result.push_back(cur_layer_out);
+        result.push_back(layers[i].predict(cur_layer_input));
     }
 
     return result;
 }
     
-vector<VectorType> deep_network::back_propagate(const MatrixType & input, const vector<batch_layer_output> & laywise_output)
+vector<VectorType> deep_network::back_propagate(const MatrixType & input,
+        const VectorType & y,
+        const vector<MatrixType> & laywise_output)
 {
-    for (int level = layers.size() -1;level > 0 ;level--)
+    MatrixType delta = MaxtrixType::Zeros(laywise_output[layers.size() - 1].rows(),
+            laywise_output[layers.size() - 1].cols());
+    vector<VectorType> gradients(layers.size());
+
+    for (int i = layers.size() - 1; i >= 0; i --)
     {
+        MatrixType * cur_input = 0;
 
-        backprop_diff(*dW[level], *db[level], layered_input[level], delta);
-
-
-        if (neuron_types[level-1] ==  linear)
-        {
-            linear_delta_update(delta, *W[level], layered_input[level]);
-
-
-        }
+        if (i > 0)
+            cur_input = &laywise_output[i-1];
         else
+            cur_input = &input;
+
+        MatrixType * cur_ouput = *laywise_output[i];
+
+        mlp_layer * layer = &this->layers[i];
+        if (layer->loss_func)
         {
-            logistic_delta_update(delta, *W[level], layered_input[level]);
+            delta += layer->loss_func(* cur_output);
         }
 
+        delta = layer->.backprop_delta(
+                delta, *input, *output);
+
+        gradients[i] = layer->compute_param_gradient(
+                delta, *input, *output);
     }
 }
 
-
-MatrixType deep_auto_encoder::error_diff_to_delta(const MatrixType & error_diff, int layer)
-{
-    MatrixType delta;
-    if (neuron_types[layer] ==  linear)
-    {
-        delta = error_diff;
-    }
-    else if (neuron_types[layer] ==  logistic)
-    {
-        delta = logistic_delta(layered_input[layer+1], error_diff);
-    }
-
-    return delta;
-}
-
-void deep_auto_encoder::backprop_output_to_encoder(MatrixType &  delta)
-{
-
-    for (int level = num_layers-1;level> coder_layer_id;level--)
-    {
-
-        backprop_diff(*dW[level], *db[level], layered_input[level], delta);
-
-
-        if (neuron_types[level-1] ==  linear)
-        {
-            linear_delta_update(delta, *W[level], layered_input[level]);
-
-
-        }
-        else
-        {
-            logistic_delta_update(delta, *W[level], layered_input[level]);
-        }
-
-    }
-
-
-}
-
-
-void deep_auto_encoder::backprop_encoder_to_input(MatrixType &  delta)
-{
-
-    for (int level = coder_layer_id;level>= 0;level--)
-    {
-
-        backprop_diff(*dW[level], *db[level], layered_input[level], delta);
-
-        if (level > 0)
-        {
-            if (neuron_types[level-1] ==  linear)
-            {
-                linear_delta_update(delta, *W[level], layered_input[level]);
-
-
-            }
-            else
-            {
-                logistic_delta_update(delta, *W[level], layered_input[level]);
-            }
-        }
-
-
-    }
-}
-
-// 	deep_auto_encoder::deep_auto_encoder(const std::vector<int>& structure_,  const std::vector<neuron_type>& neuron_types_)
-// 	{
-// 		batch_size = 0;
-// 		iter_per_batch = 0;
-//
-// 		best_perf = 0;
-//
-// 		best_machine_file_path = "";
-//
-// 		finetune_iter_num = 0;
-//
-// 		assert(structure_.size() == neuron_types_.size()+1);
-//
-// 		num_layers = 2*(structure_.size()-1);
-//
-// 		coder_layer_id = structure_.size()-2;
-//
-// 		structure.resize(1+num_layers);
-// 		neuron_types.resize(num_layers);
-//
-// 		std::copy(structure_.begin(),structure_.end(),structure.begin());
-// 		std::copy(neuron_types_.begin(),neuron_types_.end(),neuron_types.begin());
-//
-// 		std::copy(structure_.rbegin()+1,structure_.rend(),structure.begin()+structure_.size());
-// 		std::fill(neuron_types.begin()+neuron_types_.size(),neuron_types.end(),logistic );
-//
-//
-// 		layered_input.resize(num_layers+1);
-//
-// 		init_layered_error.resize(num_layers/2);
-//
-// 		Windex.resize(structure.size()-1);
-// 		bindex.resize(structure.size()-1);
-//
-// 		W.resize(structure.size()-1);
-// 		b.resize(structure.size()-1);
-//
-// 		dW.resize(structure.size()-1);
-// 		db.resize(structure.size()-1);
-//
-// 		int  W_ind = 0;
-//
-// 		for (int level = 0; level < num_layers; level ++)
-// 		{
-//
-// 			Windex[level] = W_ind;
-// 			bindex[level] = W_ind + structure[level] * structure[level + 1];
-//
-// 			W_ind = W_ind + structure[level] * structure[level + 1] + structure[level + 1];
-// 		}
-//
-// 		Wb.setZero(W_ind);
-// 		dWb.setZero(W_ind);
-//
-// 		for (int level = 0; level < num_layers; level ++)
-// 		{
-// 			W[level] = new Map<MatrixType>(Wb.data()+ Windex[level],structure[level + 1],structure[level]);
-// 			b[level] = new Map<VectorType>(Wb.data()+ bindex[level],structure[level + 1]);
-//
-// 			dW[level] = new Map<MatrixType>(dWb.data()+ Windex[level],structure[level + 1],structure[level]);
-// 			db[level] = new Map<VectorType>(dWb.data()+ bindex[level],structure[level + 1]);
-//
-// 		}
-//
-//
-// 	}
 
 	deep_network::deep_network()
 	{

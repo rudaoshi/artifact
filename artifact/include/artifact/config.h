@@ -65,7 +65,7 @@ using Eigen::Map;
 
 #else
 	#include <Eigen/Core>
-#include <Eigen/QR>
+    #include <Eigen/QR>
 	using namespace Eigen;
 	#define NumericType double
 	#define MatrixType MatrixXd

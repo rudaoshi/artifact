@@ -2,26 +2,41 @@
 #define OPTIMIZE_OBJECTIVE_H_
 
 
-#include <deeplearning/core/config.h>
-#include <deeplearning/core/machine/machine.h>
-#include <deeplearning/core/optimization/objective.h>
+#include <artifact/core/config.h>
+#include <artifact/core/machine/machine.h>
+#include <artifact/core/objective/objective.h>
 
 using namespace std;
 
-namespace deeplearning
+namespace artifact
 {
 
-    template<typename InputDataSetType, typename ParameterType>
-    class gradient_optimizable: public parameterized<ParameterType>,
-                                public objective<InputDataSetType>
+    namespace core
     {
 
-    public:
 
-      virtual ParameterType param_gradient(const InputDataSetType & testdata) = 0;
+        /**
+        * gradient_optimizable:
+        * an interface that alow gradient base optimization method can be applied
+        */
+        class gradient_optimizable
+        {
 
-    };
+        public:
 
+            virtual const VectorType &get_parameter() = 0;
+            virtual void set_parameter(const VectorType &parameter_) = 0;
+
+            virtual NumericType objective(const MatrixType & x,
+                    const VectorType & y) = 0;
+            /**
+            * partial output/partial param
+            */
+            virtual VectorType gradient(const MatrixType & x,
+                    const VectorType & y) = 0;
+
+        };
+    }
 }
 
 #endif
