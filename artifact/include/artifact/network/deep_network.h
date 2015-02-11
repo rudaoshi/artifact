@@ -5,8 +5,8 @@
  *      Author: sun
  */
 
-#ifndef BP_NETWORK_H_
-#define BP_NETWORK_H_
+#ifndef ARTIFACT_NETWORK_DEEPNETWORK_H_
+#define ARTIFACT_NETWORK_DEEPNETWORK_H_
 
 #include <artifact/config.h>
 #include <artifact/network/layer/mlp_layer.h>
@@ -17,6 +17,7 @@
 
 #include <vector>
 #include <memory>
+
 
 using namespace std;
 
@@ -54,19 +55,21 @@ namespace artifact{
 
         //	using Eigen::Map;
 
-        class deep_network : public machine<VectorType, VectorType>,
-                             public gradient_optimizable<MatrixType, VectorType>
-                             public parameterized<VectorType> {
+        class deep_network : public machine,
+                             public gradient_optimizable
+        {
 
 
         protected:
 
             // layers
-            vector<backpropagation_layer> layers;
+            vector<mlp_layer> layers;
 
-            vector<batch_layer_output> feed_forward(const MatrixType &input);
+            vector<pair<MatrixType, MatrixType>> feed_forward(const MatrixType &input);
 
-            vector<VectorType> back_propagate(const MatrixType &input, const vector<batch_layer_output> &laywise_output);
+            vector<pair<MatrixType, VectorType>> back_propagate(const MatrixType &input,
+                    const VectorType & y,
+                    const vector<pair<MatrixType, MatrixType>> &laywise_output);
 
         public:
 
@@ -74,7 +77,7 @@ namespace artifact{
 
             void remove_layer(int pos);
 
-            backpropagation_layer &get_layer(int pos);
+            mlp_layer & get_layer(int pos);
 
         public:
 
@@ -93,11 +96,16 @@ namespace artifact{
             virtual ~deep_network();
 
 
-            virtual NumericType cost(const MatrixType &traindata) = 0;
+            virtual VectorType get_parameter();
+            virtual void set_parameter(const VectorType &parameter_);
 
-            virtual VectorType param_gradient(const MatrixType &traindata) = 0;
-
-            virtual VectorType cost_gradient(const MatrixType &traindata) = 0;
+            virtual NumericType objective(const MatrixType & x,
+                    const VectorType & y) = 0;
+            /**
+            * partial output/partial param
+            */
+            virtual VectorType gradient(const MatrixType & x,
+                    const VectorType & y) = 0;
 
 
         };

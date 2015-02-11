@@ -24,7 +24,7 @@ namespace artifact
 
         public:
 
-            virtual const VectorType &get_parameter() = 0;
+            virtual VectorType  get_parameter() = 0;
             virtual void set_parameter(const VectorType &parameter_) = 0;
 
             virtual NumericType objective(const MatrixType & x,

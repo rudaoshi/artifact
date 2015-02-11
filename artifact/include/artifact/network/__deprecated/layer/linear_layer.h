@@ -18,7 +18,9 @@ namespace artifact
             virtual VectorType predict(const VectorType &input);
 
 
-            virtual MatrixType compute_delta(const MatrixType &input, const MatrixType &output);
+            virtual MatrixType compute_delta(const MatrixType &input,
+                    const MatrixType &output,
+                    const VectorType & y);
 
             virtual MatrixType backprop_delta(const MatrixType &delta, const MatrixType &input, const MatrixType &output);
 

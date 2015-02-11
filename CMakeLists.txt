@@ -35,17 +35,17 @@ set(srcfiles
     ./artifact/lib/classifier/LinearSVMClassifier.cpp
     ./artifact/lib/classifier/knn_classifier.cpp
 	./artifact/lib/classifier/NearestCenterClassifier.cpp
-	./artifact/lib/network/layer/linear_layer.cpp
-	./artifact/lib/network/layer/logistic_layer.cpp
+	artifact/lib/network/__depredicated/linear_layer.cpp
+	artifact/lib/network/__depredicated/logistic_layer.cpp
 	./artifact/lib/network/layer/mlp_layer.cpp
-    ./artifact/lib/network/network_objective.cpp
+    artifact/lib/network/__depredicated/network_objective.cpp
     ./artifact/lib/network/restricted_boltzmann_machine.cpp
-    ./artifact/lib/network/deep_auto_encoder.cpp
+    artifact/lib/network/__depredicated/deep_auto_encoder.cpp
     ./artifact/lib/network/deep_network.cpp
     ./artifact/lib/network/initializer/random_layerwise_initializer.cpp
     ./artifact/lib/network/initializer/rbm_layerwise_initializer.cpp
     ./artifact/lib/network/initializer/ae_layerwise_initializer.cpp
-    ./artifact/lib/network/network_optimobj_adapter.cpp
+    artifact/lib/network/__depredicated/network_optimobj_adapter.cpp
     ./artifact/lib/network/objective/combined_objective.cpp
     ./artifact/lib/network/objective/fisher_objective.cpp
 	./artifact/lib/network/objective/lssvm_objective.cpp

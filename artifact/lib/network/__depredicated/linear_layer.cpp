@@ -85,13 +85,14 @@ VectorType linear_layer::predict(const VectorType & x)
 }
 
 MatrixType linear_layer::compute_delta(const MatrixType & input,
-        const MatrixType & output)
+        const MatrixType & output,
+        const VectorType & y)
 {
     if (not object)
     {
         throw runtime_error("The layer is not assigned with an objective.");
     }
-    return loss_func->gradient(output);
+    return loss_func->gradient(output, y);
 }
 
 MatrixType linear_layer::backprop_delta(const MatrixType & delta,

@@ -4,12 +4,11 @@
 
 #include <artifact/config.h>
 
-#include <tuple>
 using namespace std;
 
 namespace artifact
 {
-    namespace core {
+    namespace loss {
 
         class loss {
         public:
@@ -22,6 +21,20 @@ namespace artifact
             */
             virtual MatrixType gradient(const MatrixType &x,
                             const VectorType & y) = 0;
+
+        };
+
+        class mse_loss : public loss{
+        public:
+
+            virtual NumericType loss(const MatrixType &x,
+                    const VectorType & y);
+
+            /**
+            * partial cost / partial x
+            */
+            virtual MatrixType gradient(const MatrixType &x,
+                    const VectorType & y);
 
         };
     }

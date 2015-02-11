@@ -2,22 +2,27 @@
 #define BACKPROP_NEURON_LAYER_H
 
 #include <memory>
-
+#include <algorithm>
 using namespace std;
 
 #include <artifact/config.h>
 #include <artifact/core/machine/machine.h>
 #include <artifact/core/loss/loss.h>
 #include <artifact/core/optimization/optimizable.h>
+#include <artifact/network/layer/activator.h>
 
 using namespace artifact::core;
+
 namespace artifact
 {
     namespace network {
 
+        class deep_network;
+
         class mlp_layer : public machine
         {
-        protected:
+
+        public:
 
             int input_dim;
             int output_dim;
@@ -27,30 +32,34 @@ namespace artifact
 
             shared_ptr<loss> loss_func;
 
+            shared_ptr<activator> active_func;
+
         public:
 
-
-            int get_input_dim();
-
-            int get_output_dim();
-
-        protected:
-
-            virtual VectorType compute_param_gradient(const MatrixType &delta, const MatrixType &input, const MatrixType &output);
-
-            virtual MatrixType compute_delta(const MatrixType &input, const MatrixType &output) = 0;
-
-            virtual MatrixType backprop_delta(const MatrixType &delta, const MatrixType &input, const MatrixType &output) = 0;
+            bool is_loss_contributor() const;
+            int get_input_dim() const;
+            int get_output_dim() const;
 
 
         public:
-            mlp_layer(int input_dim, int output_dim);
 
-            virtual const VectorType &get_parameter();
+            pair<MatrixType, VectorType> compute_param_gradient(const MatrixType & input, const MatrixType & delta);
 
-            virtual void set_parameter(const VectorType &parameter_);
+            MatrixType compute_delta(const MatrixType & activator,
+                    const MatrixType & output,
+                    const VectorType & y);
 
-            virtual void set_object(const shared_ptr<objective> & object );
+            MatrixType backprop_delta(const MatrixType & delta,
+                    const MatrixType & activator);
+
+            pair<MatrixType, MatrixType> predict_with_activator(const MatrixType & X);
+
+        public:
+            mlp_layer(int input_dim, int output_dim, shared_ptr<activator> active_func);
+
+            virtual void set_loss(const shared_ptr<loss> & loss_func_ );
+
+
 
         };
     }

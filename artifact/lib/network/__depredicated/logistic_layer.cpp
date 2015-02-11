@@ -69,11 +69,11 @@ MatrixType logistic_layer::compute_delta(const MatrixType & input,
 {
     //output_delta = 2/N*((Reconstruction - X).*Reconstruction.*(1-Reconstruction));
 
-    if (not object)
+    if (not loss_func)
     {
         throw runtime_error("The layer is not assigned with an objective.");
     }
-    MatrixType result = less_func->gradient(output);
+    MatrixType result = loss_func->gradient(output);
     result.array()*= output.array();
     result.array() *= (1-output.array());
     return result;
