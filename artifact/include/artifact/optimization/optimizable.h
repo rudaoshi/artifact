@@ -2,11 +2,15 @@
 #define OPTIMIZE_OBJECTIVE_H_
 
 
+#include <algorithm>
+using namespace std;
+
+
 #include <artifact/core/config.h>
 #include <artifact/core/machine/machine.h>
 #include <artifact/core/objective/objective.h>
 
-using namespace std;
+
 
 namespace artifact
 {
@@ -15,13 +19,8 @@ namespace artifact
     {
 
 
-        /**
-        * gradient_optimizable:
-        * an interface that alow gradient base optimization method can be applied
-        */
-        class gradient_optimizable
+        class optimizable
         {
-
         public:
 
             virtual VectorType  get_parameter() = 0;
@@ -29,10 +28,21 @@ namespace artifact
 
             virtual NumericType objective(const MatrixType & x,
                     const VectorType & y) = 0;
+
+        };
+
+        /**
+        * gradient_optimizable:
+        * an interface that alow gradient base optimization method can be applied
+        */
+        class gradient_optimizable: public optimizable
+        {
+
+        public:
             /**
             * partial output/partial param
             */
-            virtual VectorType gradient(const MatrixType & x,
+            virtual pair<NumericType, VectorType> gradient(const MatrixType & x,
                     const VectorType & y) = 0;
 
         };

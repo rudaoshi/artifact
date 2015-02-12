@@ -8,7 +8,7 @@ set(srcfiles
     ./artifact/lib/optimization/conjugate_gradient_optimizer.cpp
     ./artifact/lib/optimization/optimizer.cpp
     ./artifact/lib/optimization/optimize_objective.cpp
-    ./artifact/lib/optimization/step_update_optimizer.cpp
+    artifact/lib/optimization/gd_optimizer.cpp
     ./artifact/lib/manifold/isomap.cpp
     ./artifact/lib/kernel/linear_kernel.cpp
     ./artifact/lib/subspace/LDA.cpp

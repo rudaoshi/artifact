@@ -5,29 +5,33 @@
  *      Author: sun
  */
 
-#ifndef OPTIMIZER_H_
-#define OPTIMIZER_H_
+#ifndef ARTIFACT_OPTIMIZER_H_
+#define ARTIFACT_OPTIMIZER_H_
 
-#include <liblearning/core/config.h>
+
 #include <tuple>
 
 using namespace std;
 
-#include "optimize_objective.h"
+#include <artifact/optimization/optimizable.h>
 
-namespace optimization
+namespace artifact
 {
-	class optimizer
-	{
-	public:
-		optimizer();
-		virtual ~optimizer();
+    namespace optimization
+    {
+        class optimizer
+        {
+        public:
 
+            virtual tuple<NumericType, VectorType> optimize(
+                    optimizable & obj,
+                    const VectorType & param0,
+                    const MatrixType & X,
+                    const VectorType * y = nullptr  // nullptr for unsupervised optimizer
+                    ) = 0;
 
-		virtual tuple<NumericType, VectorType> optimize(optimize_objective& obj, const VectorType & x0) = 0;
-
-		virtual shared_ptr<optimizer> clone() = 0;
-	};
+        };
+    }
 }
 
 #endif /* OPTIMIZER_H_ */

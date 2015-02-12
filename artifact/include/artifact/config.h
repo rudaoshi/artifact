@@ -20,48 +20,48 @@
 
 #ifdef USE_GPU
 
-#include <gpumatrix/CORE>
-using namespace gpumatrix;
-#define NumericType double
-#define MatrixType Matrix<NumericType>
-#define VectorType Vector<NumericType>
+    #include <gpumatrix/CORE>
+    using namespace gpumatrix;
+    #define NumericType double
+    #define MatrixType Matrix<NumericType>
+    #define VectorType Vector<NumericType>
 
 
-#define InterfaceMatrixType MatrixType
-#define InterfaceVectorType VectorType
+    #define InterfaceMatrixType MatrixType
+    #define InterfaceVectorType VectorType
 
-#define EigenMatrixType Eigen::MatrixXd
-#define EigenVectorType Eigen::VectorXd
+    #define EigenMatrixType Eigen::MatrixXd
+    #define EigenVectorType Eigen::VectorXd
 
-#define MatrixType gpumatrix::Matrix<NumericType>
-#define VectorType gpumatrix::Vector<NumericType>
+    #define MatrixType gpumatrix::Matrix<NumericType>
+    #define VectorType gpumatrix::Vector<NumericType>
 
-#define GPUMatrixType gpumatrix::Matrix<NumericType>
-#define GPUVectorType gpumatrix::Vector<NumericType>
+    #define GPUMatrixType gpumatrix::Matrix<NumericType>
+    #define GPUVectorType gpumatrix::Vector<NumericType>
 
-using gpumatrix::Map;
+    using gpumatrix::Map;
 
 #elif defined USE_PARTIAL_GPU
 
-#include <Eigen/Core>
-#include <Eigen/QR>
-#include <gpumatrix/CORE>
+    #include <Eigen/Core>
+    #include <Eigen/QR>
+    #include <gpumatrix/CORE>
 
-#define NumericType double
+    #define NumericType double
 
-#define MatrixType Eigen::MatrixXd
-#define VectorType Eigen::VectorXd
+    #define MatrixType Eigen::MatrixXd
+    #define VectorType Eigen::VectorXd
 
-#define InterfaceMatrixType MatrixType
-#define InterfaceVectorType VectorType
+    #define InterfaceMatrixType MatrixType
+    #define InterfaceVectorType VectorType
 
-#define EigenMatrixType Eigen::MatrixXd
-#define EigenVectorType Eigen::VectorXd
+    #define EigenMatrixType Eigen::MatrixXd
+    #define EigenVectorType Eigen::VectorXd
 
-#define GPUMatrixType gpumatrix::Matrix<NumericType>
-#define GPUVectorType gpumatrix::Vector<NumericType>
+    #define GPUMatrixType gpumatrix::Matrix<NumericType>
+    #define GPUVectorType gpumatrix::Vector<NumericType>
 
-using Eigen::Map;
+    using Eigen::Map;
 
 #else
 	#include <Eigen/Core>

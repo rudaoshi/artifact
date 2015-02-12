@@ -129,24 +129,36 @@ NumericType deep_network::objective(const MatrixType & X,
 
 }
 
-VectorType deep_network::gradient(const MatrixType & x,
+pair<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
         const VectorType & y)
 {
-    vector<pair<MatrixType, MatrixType>> deep_network::feed_forward(const MatrixType &input)
-    {
-        vector<pair<MatrixType, MatrixType>> result;
-        MatrixType cur_layer_input = input;
-        for (int i=0; i<layers.size(); i++)
-        {
-            result.push_back(layers[i].predict_with_activator(cur_layer_input));
-        }
+    vector<pair<MatrixType, MatrixType>> forward_result =  deep_network::feed_forward(x);
 
-        return result;
+    vector<pair<MatrixType, VectorType>> backprop_result = deep_network::back_propagate(x,y,
+            forward_result);
+
+    auto & last_layer_output = forward_result.rbegin()->second;
+    auto last_layer = this->layers.rbegin();
+
+    NumericType loss =  last_layer.loss_func.loss(last_layer_output, y);
+
+    int total_param_num = 0;
+    for (auto layer : this->layers)
+    {
+        total_param_num += (layer.get_input_dim() + 1) * layer.get_output_dim();
     }
 
-    vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixType & input,
-            const VectorType & y,
-            const vector<pair<MatrixType, MatrixType>> & laywise_output)
+    VectorType Wb_gradient = VectorType::Zero(total_param_num);
+
+    int start_idx = 0;
+    for (auto Wb_pair : backprop_result)
+    {
+        Map<MatrixType>(Wb_gradient.data()+ start_idx, Wb_pair.first.rows(),Wb_pair.first.cols()) = Wb_pair.first;
+        start_idx += Wb_pair.first.size();
+        Map<VectorType>(Wb_gradient.data()+ start_idx, Wb_pair.second.size()) = Wb_pair.first;
+        start_idx += Wb_pair.first.size();
+    }
+    return make_pair(loss, Wb_gradient);
 }
 
 

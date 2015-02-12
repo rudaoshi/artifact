@@ -104,7 +104,7 @@ namespace artifact{
             /**
             * partial output/partial param
             */
-            virtual VectorType gradient(const MatrixType & x,
+            virtual pair<NumericType, VectorType> gradient(const MatrixType & x,
                     const VectorType & y) = 0;
 
 
