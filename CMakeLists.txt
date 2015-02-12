@@ -35,17 +35,9 @@ set(srcfiles
     ./artifact/lib/classifier/LinearSVMClassifier.cpp
     ./artifact/lib/classifier/knn_classifier.cpp
 	./artifact/lib/classifier/NearestCenterClassifier.cpp
-	artifact/lib/network/__depredicated/linear_layer.cpp
-	artifact/lib/network/__depredicated/logistic_layer.cpp
 	./artifact/lib/network/layer/mlp_layer.cpp
-    artifact/lib/network/__depredicated/network_objective.cpp
     ./artifact/lib/network/restricted_boltzmann_machine.cpp
-    artifact/lib/network/__depredicated/deep_auto_encoder.cpp
     ./artifact/lib/network/deep_network.cpp
-    ./artifact/lib/network/initializer/random_layerwise_initializer.cpp
-    ./artifact/lib/network/initializer/rbm_layerwise_initializer.cpp
-    ./artifact/lib/network/initializer/ae_layerwise_initializer.cpp
-    artifact/lib/network/__depredicated/network_optimobj_adapter.cpp
     ./artifact/lib/network/objective/combined_objective.cpp
     ./artifact/lib/network/objective/fisher_objective.cpp
 	./artifact/lib/network/objective/lssvm_objective.cpp
@@ -61,11 +53,14 @@ set(srcfiles
     ./artifact/lib/classifier/blas/dscal.c
 )
 
-
-
-
-
-
+IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++0x -O2")
+			SET(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
+			include_directories(${CMAKE_SOURCE_DIR}/artifact/include /usr/local/include /usr/local/include/eigen3)
+			link_directories(/usr/local/lib)
+			add_library(learning SHARED ${srcfiles})
+			target_link_libraries(learning hdf5 hdf5_cpp camp log4cpp boost_filesystem boost_system)
+ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")

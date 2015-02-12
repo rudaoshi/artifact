@@ -10,6 +10,7 @@ namespace artifact
         {
             vector<int> layer_sizes;
             vector<string> activator_types;
+            string loss;
 
         };
 

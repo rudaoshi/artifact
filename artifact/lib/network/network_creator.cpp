@@ -2,8 +2,9 @@
 #include <artifact/network/network_creator.h>
 #include <artifact/network/layer/activator.h>
 #include <artifact/network/deep_network.h>
-
+#include <artifact/loss/loss.h>
 using namespace artifact::network;
+using namespace artifact::loss;
 
 
 deep_network random_network_creator::create(const network_architecture & architec_param,
@@ -61,6 +62,13 @@ deep_network random_network_creator::create(const network_architecture & archite
 
 
     }
+
+    if (architec_param.loss == "mse")
+    {
+        shared_ptr<loss> loss = new mse_loss();
+        network.get_layer(architec_param.activator_types.size()-1).loss = loss;
+    }
+
     return network;
 
 }
