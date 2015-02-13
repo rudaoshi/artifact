@@ -1,6 +1,6 @@
-#include <artifact/optimization/gradient_descent_optimizer.h>
+#include <artifact/optimization/gd_optimizer.h>
 
-using namespace optimization;
+using namespace artifact::optimization;
 
 gd_optimizer::gd_optimizer(
         NumericType learning_rate_, NumericType decay_rate_, int max_epoches_)
@@ -20,6 +20,8 @@ tuple<NumericType, VectorType> gd_optimizer::optimize(optimizable & obj,
         const VectorType * y // nullptr for unsupervised optimizer
 )
 {
+    gradient_optimizable & opt = dynamic_cast<gradient_optimizable &>(obj);
+
 	NumericType fval = numeric_limits<NumericType>::quiet_NaN();
 
 	VectorType diff;
@@ -29,15 +31,15 @@ tuple<NumericType, VectorType> gd_optimizer::optimize(optimizable & obj,
     NumericType cur_learning_rate = this->learning_rate;
 	for (int i = 0; i < this->max_epoches; i++)
 	{
-        obj.set_parameter(param);
-		tie(fval,diff) = obj.gradient(X, *y);
+        opt.set_parameter(param);
+		tie(fval,diff) = opt.gradient(X, *y);
 
         param -= cur_learning_rate*diff;
         cur_learning_rate *= this->decay_rate;
 	}
 
-    obj.set_parameter(param);
-    fval = obj.objective(X, *y);
+    opt.set_parameter(param);
+    fval = opt.objective(X, *y);
 
 	return make_tuple(fval,param);
 }

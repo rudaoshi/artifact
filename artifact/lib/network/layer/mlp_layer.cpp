@@ -80,7 +80,7 @@ MatrixType mlp_layer::backprop_delta(const MatrixType & delta,
 {
 
     MatrixType new_delta =  (W.transpose()*delta);
-    new_delta.array() *= active_func->gradient(activator)
+    new_delta.array() *= active_func->gradient(activator).array();
 
     return new_delta;
 
@@ -88,7 +88,7 @@ MatrixType mlp_layer::backprop_delta(const MatrixType & delta,
 
 bool mlp_layer::is_loss_contributor() const
 {
-    return loss_func;
+    return bool(loss_func);
 }
 
 pair<MatrixType, VectorType> mlp_layer::compute_param_gradient(const MatrixType & input, const MatrixType & delta)
@@ -115,12 +115,7 @@ pair<MatrixType, VectorType> mlp_layer::compute_param_gradient(const MatrixType 
 }
 
 
-const VectorType  &mlp_layer::get_parameter()
-{
-    return make_parameter(this->W, this->b);
-}
-
-void mlp_layer::set_loss(shared_ptr<loss> & loss_func_ )
+void mlp_layer::set_loss(const shared_ptr<loss_function> & loss_func_ )
 {
     loss_func = loss_func_;
 }

@@ -1,21 +1,18 @@
-#ifndef OPTIMIZE_OBJECTIVE_H_
-#define OPTIMIZE_OBJECTIVE_H_
+#ifndef ARTIFACT_OPTIMIZABLE_H_
+#define ARTIFACT_OPTIMIZABLE_H_
 
 
 #include <algorithm>
 using namespace std;
 
 
-#include <artifact/core/config.h>
-#include <artifact/core/machine/machine.h>
-#include <artifact/core/objective/objective.h>
-
+#include <artifact/config.h>
 
 
 namespace artifact
 {
 
-    namespace core
+    namespace optimization
     {
 
 

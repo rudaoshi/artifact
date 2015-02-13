@@ -1,14 +1,18 @@
+#include <memory>
+
+using namespace std;
+
 
 #include <artifact/network/network_creator.h>
 #include <artifact/network/layer/activator.h>
 #include <artifact/network/deep_network.h>
 #include <artifact/loss/loss.h>
 using namespace artifact::network;
-using namespace artifact::loss;
+using namespace artifact::losses;
 
 
 deep_network random_network_creator::create(const network_architecture & architec_param,
-                    const create_context * context = 0)
+                    const create_context * context)
 {
     if (architec_param.layer_sizes.size() != architec_param.activator_types.size() + 1)
     {
@@ -25,15 +29,15 @@ deep_network random_network_creator::create(const network_architecture & archite
         string type = architec_param.activator_types[i];
 
         shared_ptr<activator> activate_func;
-        NumericalType random_scale = 0;
-        if (type == linear_activator::type)
+        NumericType random_scale = 0;
+        if (type == "linear")
         {
-            activate_func = new linear_activator();
+            activate_func = make_shared<linear_activator>();
             random_scale = 4.0 * sqrt(6.0 / (input_num + output_num));
         }
-        else if (type == logistic_activator::type)
+        else if (type == "logistic")
         {
-            activate_func = new logistic_activator();
+            activate_func = make_shared<logistic_activator>();
             random_scale = 4.0 *sqrt(6.0 / (input_num + output_num));
         }
         else
@@ -56,7 +60,7 @@ deep_network random_network_creator::create(const network_architecture & archite
         mlp_layer layer(input_num, output_num, activate_func);
 
         layer.W = MatrixType::Random(input_num, output_num) * random_scale;
-        layer.b = MatrixType::Zero(output_num);
+        layer.b = VectorType::Zero(output_num);
 
         network.add_layer(layer);
 
@@ -65,12 +69,11 @@ deep_network random_network_creator::create(const network_architecture & archite
 
     if (architec_param.loss == "mse")
     {
-        shared_ptr<loss> loss = new mse_loss();
-        network.get_layer(architec_param.activator_types.size()-1).loss = loss;
+        shared_ptr<loss_function> loss = make_shared<mse_loss>();
+        network.get_layer(architec_param.activator_types.size()-1).loss_func = loss;
     }
 
     return network;
 
 }
 
-#endif

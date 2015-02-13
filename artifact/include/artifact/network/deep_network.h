@@ -8,52 +8,23 @@
 #ifndef ARTIFACT_NETWORK_DEEPNETWORK_H_
 #define ARTIFACT_NETWORK_DEEPNETWORK_H_
 
-#include <artifact/config.h>
-#include <artifact/network/layer/mlp_layer.h>
-
-#include <artifact/core/machine/machine.h>
-#include <artifact/core/optimization/optimizable.h>
-
-
 #include <vector>
 #include <memory>
 
-
 using namespace std;
+
+#include <artifact/config.h>
+#include <artifact/network/layer/mlp_layer.h>
+
+#include <artifact/machine/machine.h>
+#include <artifact/optimization/optimizable.h>
+
+using namespace artifact::machines;
+using namespace artifact::optimization;
 
 namespace artifact{
     namespace network {
 
-        struct network_network_param {
-            vector<int> structure;
-            vector<neuron_type> neuron_types;
-
-            shared_ptr<layerwise_initializer> initializer;
-
-            shared_ptr<network_objective> objective;
-
-            shared_ptr<optimization::optimizer> finetune_optimizer;
-
-            shared_ptr<evaluator<NumericType> > perf_evaluator;
-
-            int batch_size;
-
-            int iter_per_batch;
-
-            int finetune_iter_num;
-
-            int code_layer_id;
-
-        };
-
-
-        struct batch_layer_output {
-            NumericType cost;
-            MatrixType output;
-        };
-
-
-        //	using Eigen::Map;
 
         class deep_network : public machine,
                              public gradient_optimizable
@@ -73,7 +44,7 @@ namespace artifact{
 
         public:
 
-            void add_layer(const bp_layer &layer);
+            void add_layer(const mlp_layer &layer);
 
             void remove_layer(int pos);
 
@@ -89,23 +60,24 @@ namespace artifact{
 
             //		network_auto_encoder(const vector<int>& structure,  const vector<neuron_type>& neuron_type);
 
-            deep_network(const deep_network &net_);
-
             deep_network();
 
             virtual ~deep_network();
 
+            MatrixType predict(const MatrixType & X);
+
+            VectorType predict(const VectorType & x);
 
             virtual VectorType get_parameter();
             virtual void set_parameter(const VectorType &parameter_);
 
             virtual NumericType objective(const MatrixType & x,
-                    const VectorType & y) = 0;
+                    const VectorType & y);
             /**
             * partial output/partial param
             */
             virtual pair<NumericType, VectorType> gradient(const MatrixType & x,
-                    const VectorType & y) = 0;
+                    const VectorType & y);
 
 
         };

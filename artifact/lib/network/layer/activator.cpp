@@ -1,7 +1,7 @@
 
 #include <artifact/network/layer/activator.h>
 
-using namespace artifact::netowrk;
+using namespace artifact::network;
 
 
 VectorType linear_activator::activate(const VectorType & v)
@@ -39,7 +39,7 @@ VectorType logistic_activator::activate(const VectorType & v)
 
 #else
 
-    return (1 + (-m).array().exp()).inverse();
+    return (1 + (-v).array().exp()).inverse();
 
 #endif
 }

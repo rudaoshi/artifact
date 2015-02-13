@@ -1,15 +1,15 @@
 
-#ifndef ARTIFACT_NETWORK_NETWORK_CREATEOR_H_
-#define ARTIFACT_NETWORK_NETWORK_CREATEOR_H_
+#ifndef ARTIFACT_NETWORK_NETWORK_TRAINER_H_
+#define ARTIFACT_NETWORK_NETWORK_TRAINER_H_
 
 #include <artifact/config.h>
-
+#include <artifact/network/deep_network.h>
 
 namespace artifact
 {
     namespace network
     {
-        struct training_param
+        struct training_setting
         {
 
         };
@@ -19,7 +19,7 @@ namespace artifact
 
         };
 
-        struct sgd_training_param: public training_param
+        struct sgd_training_setting: public training_setting
         {
             NumericType learning_rate;
             NumericType decay_rate;
@@ -27,7 +27,7 @@ namespace artifact
             int max_epoches;
         };
 
-        struct gd_training_param: public training_param
+        struct gd_training_setting: public training_setting
         {
             NumericType learning_rate;
             NumericType decay_rate;
@@ -36,26 +36,26 @@ namespace artifact
 
         class network_trainer
         {
-            deep_network train(deep_network & net,
-                    const MatrixType & X, const MatrixType & y,
-                    const training_param & param,
+            virtual deep_network train(deep_network & net,
+                    const training_setting & param,
+                    const MatrixType & X, const VectorType * y = 0,
                     const training_context * context = 0) = 0;
 
         };
 
         class gd_network_trainer: public network_trainer
         {
-            deep_network train(deep_network & net,
-                    const MatrixType & X, const MatrixType & y,
-                    const training_param & param,
+            virtual deep_network train(deep_network & net,
+                    const training_setting & param,
+                    const MatrixType & X, const VectorType * y = 0,
                     const training_context * context = 0);
         };
 
         class sgd_network_trainer: public network_trainer
         {
-            deep_network train(deep_network & net,
-                    const MatrixType & X, const MatrixType & y,
-                    const training_param & param,
+            virtual deep_network train(deep_network & net,
+                    const training_setting & param,
+                    const MatrixType & X, const VectorType * y = 0,
                     const training_context * context = 0);
         };
     }

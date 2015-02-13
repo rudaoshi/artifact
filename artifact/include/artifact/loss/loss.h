@@ -8,9 +8,9 @@ using namespace std;
 
 namespace artifact
 {
-    namespace loss {
+    namespace losses {
 
-        class loss {
+        class loss_function {
         public:
 
             virtual NumericType loss(const MatrixType &x,
@@ -24,7 +24,7 @@ namespace artifact
 
         };
 
-        class mse_loss : public loss{
+        class mse_loss : public loss_function{
         public:
 
             virtual NumericType loss(const MatrixType &x,

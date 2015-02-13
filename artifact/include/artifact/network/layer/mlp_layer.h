@@ -1,17 +1,17 @@
-#ifndef BACKPROP_NEURON_LAYER_H
-#define BACKPROP_NEURON_LAYER_H
+#ifndef ARTIFACT_MLP_LAYER_H
+#define ARTIFACT_MLP_LAYER_H
 
 #include <memory>
 #include <algorithm>
 using namespace std;
 
 #include <artifact/config.h>
-#include <artifact/core/machine/machine.h>
-#include <artifact/core/loss/loss.h>
-#include <artifact/core/optimization/optimizable.h>
+#include <artifact/machine/machine.h>
+#include <artifact/loss/loss.h>
 #include <artifact/network/layer/activator.h>
 
-using namespace artifact::core;
+using namespace artifact::losses;
+using namespace artifact::machines;
 
 namespace artifact
 {
@@ -30,7 +30,7 @@ namespace artifact
             MatrixType W;
             VectorType b;
 
-            shared_ptr<loss> loss_func;
+            shared_ptr<loss_function> loss_func;
 
             shared_ptr<activator> active_func;
 
@@ -57,7 +57,12 @@ namespace artifact
         public:
             mlp_layer(int input_dim, int output_dim, shared_ptr<activator> active_func);
 
-            virtual void set_loss(const shared_ptr<loss> & loss_func_ );
+            virtual void set_loss(const shared_ptr<loss_function> & loss_func_ );
+
+            virtual VectorType predict(const VectorType &testdata);
+
+            virtual MatrixType
+                    predict(const MatrixType &test_set);
 
 
 

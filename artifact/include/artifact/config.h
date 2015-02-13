@@ -6,7 +6,7 @@
 #include <boost/serialization/nvp.hpp>
 
 
-#define EIGEN_MATRIX_PLUGIN <liblearning/util/Eigen_matrix_addon.h>
+#define EIGEN_MATRIX_PLUGIN <artifact/util/Eigen_matrix_addon.h>
 
 #define BOOST_FILESYSTEM_VERSION 3
 

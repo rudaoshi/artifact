@@ -2,7 +2,7 @@
 #import <artifact/loss/loss.h>
 
 
-using namespace artifact::loss;
+using namespace artifact::losses;
 
 NumericType mse_loss::loss(const MatrixType &x,
             const VectorType & y) {

@@ -10,18 +10,10 @@
 
 #include <artifact/util/math_util.h>
 #include <artifact/util/matrix_util.h>
-#include <artifact/network/restricted_boltzmann_machine.h>
-
-#include <algorithm>
-#include <artifact/network/neuron_layer_operation.h>
-
-#include <artifact/network/network_optimobj_adapter.h>
-#include <artifact/optimization/conjugate_gradient_optimizer.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string.hpp>
 
-#include <boost/foreach.hpp>
 #include <artifact/util/algo_util.h>
 
 
@@ -29,7 +21,13 @@ using namespace std;
 
 using namespace artifact::network;
 
+deep_network::deep_network()
+{
+}
 
+deep_network::~deep_network()
+{
+}
 
 MatrixType deep_network::predict(const MatrixType & X)
 {
@@ -84,15 +82,15 @@ vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixTy
 
     for (int i = layers.size() - 1; i >= 0; i --)
     {
-        MatrixType * cur_input = 0;
+        const MatrixType * cur_input = 0;
 
         if (i > 0)
             cur_input = &laywise_output[i-1].second;
         else
             cur_input = &input;
 
-        MatrixType * cur_ouput = & laywise_output[i].second;
-        MatrixType * cur_activator = & laywise_output[i].first;
+        const MatrixType * cur_ouput = & laywise_output[i].second;
+        const MatrixType * cur_activator = & laywise_output[i].first;
 
         mlp_layer * layer = &this->layers[i];
         if (layer->is_loss_contributor())
@@ -105,7 +103,7 @@ vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixTy
             }
         }
 
-        delta = layer->.backprop_delta(
+        delta = layer->backprop_delta(
                 delta, *cur_activator);
 
         gradients[i] = layer->compute_param_gradient(
@@ -125,7 +123,7 @@ NumericType deep_network::objective(const MatrixType & X,
     MatrixType output = this->predict(X);
     auto last_layer = this->layers.rbegin();
 
-    return last_layer.loss_func.loss(output, y);
+    return last_layer->loss_func->loss(output, y);
 
 }
 
@@ -140,7 +138,7 @@ pair<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
     auto & last_layer_output = forward_result.rbegin()->second;
     auto last_layer = this->layers.rbegin();
 
-    NumericType loss =  last_layer.loss_func.loss(last_layer_output, y);
+    NumericType loss =  last_layer->loss_func->loss(last_layer_output, y);
 
     int total_param_num = 0;
     for (auto layer : this->layers)
@@ -189,16 +187,28 @@ void deep_network::set_parameter(const VectorType &parameter_)
     int start_idx = 0;
     for (auto layer : this->layers)
     {
-        layer.W = Map<MatrixType>(parameter_.data()+ start_idx,layer.get_output_dim(),layer.get_input_dim()) ;
+        layer.W = Map<const MatrixType>(parameter_.data()+ start_idx,layer.get_output_dim(),layer.get_input_dim()) ;
         start_idx += layer.get_input_dim()  * layer.get_output_dim();
-        layer.b = Map<VectorType>(parameter_.data()+ start_idx, layer.get_output_dim());
+        layer.b = Map<const VectorType>(parameter_.data()+ start_idx, layer.get_output_dim());
         start_idx += layer.get_output_dim();
     }
 
 }
 
-
-deep_network::deep_network()
+void deep_network::add_layer(const mlp_layer &layer)
 {
+    layers.push_back(layer);
 }
+
+void deep_network::remove_layer(int pos)
+{
+    layers.erase(layers.begin() + pos);
+}
+
+mlp_layer & deep_network::get_layer(int pos)
+{
+    return layers[pos];
+}
+
+
 

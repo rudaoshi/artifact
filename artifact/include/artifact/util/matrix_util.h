@@ -10,7 +10,7 @@
 
 
 
-#include <liblearning/core/config.h>
+#include <artifact/config.h>
 
 template <class MT> MT randn(int r, int c);
 
