@@ -1,14 +1,17 @@
-#ifndef ARTIFACT_MLP_LAYER_H
-#define ARTIFACT_MLP_LAYER_H
+#ifndef ARTIFACT_NETWORK_MLPLAYER_H
+#define ARTIFACT_NETWORK_MLPLAYER_H
 
-#include <memory>
-#include <algorithm>
-using namespace std;
+
 
 #include <artifact/config.h>
 #include <artifact/machine/machine.h>
 #include <artifact/loss/loss.h>
 #include <artifact/network/layer/activator.h>
+
+
+#include <memory>
+#include <algorithm>
+using namespace std;
 
 using namespace artifact::losses;
 using namespace artifact::machines;
@@ -16,8 +19,6 @@ using namespace artifact::machines;
 namespace artifact
 {
     namespace network {
-
-        class deep_network;
 
         class mlp_layer : public machine
         {
@@ -30,9 +31,9 @@ namespace artifact
             MatrixType W;
             VectorType b;
 
-            shared_ptr<loss_function> loss_func;
+            std::shared_ptr<loss_function> loss_func;
 
-            shared_ptr<activator> active_func;
+            std::shared_ptr<activator> active_func;
 
         public:
 

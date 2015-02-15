@@ -1,6 +1,6 @@
 
-#ifndef OPTIMIZE_OBJECTIVE_H_
-#define OPTIMIZE_OBJECTIVE_H_
+#ifndef ARTIFACT_LOSSES_H
+#define ARTIFACT_LOSSES_H
 
 #include <artifact/config.h>
 

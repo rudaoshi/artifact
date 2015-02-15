@@ -1,5 +1,5 @@
-#ifndef MACHINE_H_
-#define MACHINE_H_
+#ifndef ARTIFACT_MACHINE_H_
+#define ARTIFACT_MACHINE_H_
 
 #include <artifact/config.h>
 

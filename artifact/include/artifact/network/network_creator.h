@@ -28,6 +28,7 @@ namespace artifact
         };
         class network_creator
         {
+        public:
             virtual deep_network create(const network_architecture & architec_param,
                                 const create_context * context = 0) = 0;
 
@@ -35,6 +36,7 @@ namespace artifact
 
         class random_network_creator: public network_creator
         {
+        public:
             virtual deep_network create(const network_architecture & architec_param,
                     const create_context * context = 0);
         };
