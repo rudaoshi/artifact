@@ -2,6 +2,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 #include <boost/property_tree/ptree.hpp>
@@ -15,8 +16,10 @@ namespace po = boost::program_options;
 #include <artifact/network/deep_network.h>
 #include <artifact/network/network_creator.h>
 #include <artifact/network/network_trainer.h>
+#include <artifact/utils/matrix_io_txt.h>
 
 using namespace artifact::network;
+using namespace artifact::utils;
 
 
 
@@ -40,7 +43,7 @@ int main(int argc, char ** argv)
     }
 
     if (not vm.count("config_file")) {
-        cout << "Config file path is not specificed.";
+        cerr << "Config file path is not specificed.";
         return -1;
     }
 
@@ -48,8 +51,8 @@ int main(int argc, char ** argv)
 
     boost::property_tree::ptree pt;
     boost::property_tree::ini_parser::read_ini(config_file_path, pt);
-    string train_data_path = pt.get<std::string>("data.train");
-    string valid_data_path = pt.get<std::string>("data.valid");
+    string train_data_path_prefix = pt.get<std::string>("data.train_prefix");
+//    string valid_data_path = pt.get<std::string>("data.valid");
 
     string net_layer_sizes = pt.get<std::string>("network.layer_size");
     string net_layer_types = pt.get<std::string>("network.layer_types");
@@ -86,6 +89,10 @@ int main(int argc, char ** argv)
 
     gd_network_trainer trainer;
 
-//    net = trainer.train(net,X,y,training_param);
+    MatrixType X = load_matrix_from_txt(train_data_path_prefix + ".X");
+    VectorType y = load_vector_from_txt(train_data_path_prefix + ".y");
+
+
+    net = trainer.train(net,training_settings,X,&y);
 
 }

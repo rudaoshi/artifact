@@ -1,25 +1,23 @@
 cmake_minimum_required(VERSION 2.8)
 
+
+enable_testing()
+
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++0x -O2")
 			SET(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
-			add_subdirectory(artifact/lib)
-			add_subdirectory(artifact/app)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++0x -O2")
 			SET(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
-			add_subdirectory(artifact/lib)
-			add_subdirectory(artifact/app)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
-			add_subdirectory(artifact/lib)
-			add_subdirectory(artifact/app)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 
-
+add_subdirectory(artifact/lib)
+add_subdirectory(artifact/app)
 

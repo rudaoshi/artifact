@@ -23,8 +23,8 @@ deep_network random_network_creator::create(const network_architecture & archite
 
     for (int i = 0; i < architec_param.activator_types.size(); i++)
     {
-        int input_num = architec_param.layer_sizes[i];
-        int output_num = architec_param.layer_sizes[i+1];
+        int input_dim = architec_param.layer_sizes[i];
+        int output_dim = architec_param.layer_sizes[i+1];
 
         string type = architec_param.activator_types[i];
 
@@ -33,12 +33,12 @@ deep_network random_network_creator::create(const network_architecture & archite
         if (type == "linear")
         {
             activate_func = make_shared<linear_activator>();
-            random_scale = 4.0 * sqrt(6.0 / (input_num + output_num));
+            random_scale = 4.0 * sqrt(6.0 / (input_dim + output_dim));
         }
         else if (type == "logistic")
         {
             activate_func = make_shared<logistic_activator>();
-            random_scale = 4.0 *sqrt(6.0 / (input_num + output_num));
+            random_scale = 4.0 *sqrt(6.0 / (input_dim + output_dim));
         }
         else
         {
@@ -57,10 +57,10 @@ deep_network random_network_creator::create(const network_architecture & archite
 //            random_high = -0.0;
 //        }
 
-        mlp_layer layer(input_num, output_num, activate_func);
+        mlp_layer layer(input_dim, output_dim, activate_func);
 
-        layer.W = MatrixType::Random(input_num, output_num) * random_scale;
-        layer.b = VectorType::Zero(output_num);
+        layer.W = MatrixType::Random(output_dim, input_dim) * random_scale;
+        layer.b = VectorType::Zero(output_dim);
 
         network.add_layer(layer);
 

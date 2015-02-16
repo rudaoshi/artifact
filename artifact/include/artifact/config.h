@@ -1,12 +1,12 @@
 #ifndef ARTIFACT_CONFIG_H
 #define ARTIFACT_CONFIG_H
 
-#include <boost/serialization/array.hpp>
-#include <boost/serialization/collection_size_type.hpp>
-#include <boost/serialization/nvp.hpp>
+//#include <boost/serialization/array.hpp>
+//#include <boost/serialization/collection_size_type.hpp>
+//#include <boost/serialization/nvp.hpp>
 
 
-#define EIGEN_MATRIX_PLUGIN <artifact/util/Eigen_matrix_addon.h>
+//#define EIGEN_MATRIX_PLUGIN <artifact/util/Eigen_matrix_addon.h>
 
 #define BOOST_FILESYSTEM_VERSION 3
 
@@ -75,9 +75,6 @@
 	#define EigenVectorType Eigen::VectorXd
 	#define InterfaceMatrixType MatrixXd
 	#define InterfaceVectorType VectorXd
-
-	#define MatrixType MatrixXd
-	#define VectorType VectorXd
 
 	using Eigen::Map;
 

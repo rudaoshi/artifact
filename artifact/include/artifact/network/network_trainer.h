@@ -36,6 +36,7 @@ namespace artifact
 
         class network_trainer
         {
+        public:
             virtual deep_network train(deep_network & net,
                     const training_setting & param,
                     const MatrixType & X, const VectorType * y = 0,
@@ -45,6 +46,7 @@ namespace artifact
 
         class gd_network_trainer: public network_trainer
         {
+        public:
             virtual deep_network train(deep_network & net,
                     const training_setting & param,
                     const MatrixType & X, const VectorType * y = 0,
@@ -53,6 +55,7 @@ namespace artifact
 
         class sgd_network_trainer: public network_trainer
         {
+        public:
             virtual deep_network train(deep_network & net,
                     const training_setting & param,
                     const MatrixType & X, const VectorType * y = 0,

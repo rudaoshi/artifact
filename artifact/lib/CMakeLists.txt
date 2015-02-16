@@ -1,6 +1,7 @@
 
 set(srcfiles 
     optimization/gd_optimizer.cpp
+    optimization/numerical_gradient.cpp
 	network/layer/mlp_layer.cpp
 #    ./artifact/lib/network/restricted_boltzmann_machine.cpp
     network/deep_network.cpp
@@ -8,6 +9,7 @@ set(srcfiles
     network/network_trainer.cpp
     network/layer/activator.cpp
     loss/loss.cpp
+    utils/matrix_io_txt.cpp
 )
 
 

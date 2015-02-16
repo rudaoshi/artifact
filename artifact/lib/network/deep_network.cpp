@@ -6,18 +6,7 @@
 */
 
 #include <artifact/network/deep_network.h>
-#include <cassert>
 
-#include <artifact/util/math_util.h>
-#include <artifact/util/matrix_util.h>
-
-#include <boost/lexical_cast.hpp>
-#include <boost/algorithm/string.hpp>
-
-#include <artifact/util/algo_util.h>
-
-
-using namespace std;
 
 using namespace artifact::network;
 
@@ -63,14 +52,17 @@ vector<pair<MatrixType, MatrixType>> deep_network::feed_forward(const MatrixType
 {
     vector<pair<MatrixType, MatrixType>> result;
     MatrixType cur_layer_input = input;
-    for (int i=0; i<layers.size(); i++)
+    for (auto layer: this->layers)
     {
-        result.push_back(layers[i].predict_with_activator(cur_layer_input));
+        auto feed_forward_info = layer.predict_with_activator(cur_layer_input);
+        result.push_back(feed_forward_info);
+        cur_layer_input = feed_forward_info.second;
+
     }
 
     return result;
 }
-    
+#include <iostream>
 vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixType & input,
         const VectorType & y,
         const vector<pair<MatrixType, MatrixType>> & laywise_output)
@@ -102,12 +94,16 @@ vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixTy
                 delta += layer->compute_delta(*cur_activator, *cur_ouput, y);
             }
         }
-
+        std::cerr << "delta computed." << std::endl;
         delta = layer->backprop_delta(
-                delta, *cur_activator);
+                delta, *cur_input);
+
+        std::cerr << "delta updated. " << std::endl;
 
         gradients[i] = layer->compute_param_gradient(
                 *cur_input, delta);
+
+        std::cerr << "gradient computed." << std::endl;
     }
 
     return gradients;
@@ -127,13 +123,19 @@ NumericType deep_network::objective(const MatrixType & X,
 
 }
 
-pair<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
+
+tuple<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
         const VectorType & y)
 {
+
     vector<pair<MatrixType, MatrixType>> forward_result =  deep_network::feed_forward(x);
+
+    std::cerr << "feedforward finished." << std::endl;
 
     vector<pair<MatrixType, VectorType>> backprop_result = deep_network::back_propagate(x,y,
             forward_result);
+
+    std::cerr << "feedback finished." << std::endl;
 
     auto & last_layer_output = forward_result.rbegin()->second;
     auto last_layer = this->layers.rbegin();
@@ -153,10 +155,10 @@ pair<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
     {
         Map<MatrixType>(Wb_gradient.data()+ start_idx, Wb_pair.first.rows(),Wb_pair.first.cols()) = Wb_pair.first;
         start_idx += Wb_pair.first.size();
-        Map<VectorType>(Wb_gradient.data()+ start_idx, Wb_pair.second.size()) = Wb_pair.first;
-        start_idx += Wb_pair.first.size();
+        Map<VectorType>(Wb_gradient.data()+ start_idx, Wb_pair.second.size()) = Wb_pair.second;
+        start_idx += Wb_pair.second.size();
     }
-    return make_pair(loss, Wb_gradient);
+    return make_tuple(loss, Wb_gradient);
 }
 
 
@@ -211,4 +213,7 @@ mlp_layer & deep_network::get_layer(int pos)
 }
 
 
-
+int deep_network::get_layer_num()
+{
+    return layers.size();
+}

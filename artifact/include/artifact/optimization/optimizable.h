@@ -2,7 +2,7 @@
 #define ARTIFACT_OPTIMIZABLE_H_
 
 
-#include <algorithm>
+#include <tuple>
 using namespace std;
 
 
@@ -39,7 +39,7 @@ namespace artifact
             /**
             * partial output/partial param
             */
-            virtual pair<NumericType, VectorType> gradient(const MatrixType & x,
+            virtual tuple<NumericType, VectorType> gradient(const MatrixType & x,
                     const VectorType & y) = 0;
 
         };
