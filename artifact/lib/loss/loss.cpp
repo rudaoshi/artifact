@@ -1,5 +1,5 @@
 
-#import <artifact/loss/loss.h>
+#include <artifact/loss/loss.h>
 
 
 using namespace artifact::losses;

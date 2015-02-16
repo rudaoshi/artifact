@@ -72,15 +72,16 @@ MatrixType mlp_layer::compute_delta(
     {
         throw runtime_error("The layer is not assigned with an objective.");
     }
-    return active_func->gradient(activator).array() * loss_func->gradient(output, y).array();
+    return active_func->gradient(activator, output).array() * loss_func->gradient(output, y).array();
 }
 
 MatrixType mlp_layer::backprop_delta(const MatrixType & delta,
-        const MatrixType & activator)
+        const MatrixType & former_activator,
+        const MatrixType & input)
 {
 
     MatrixType new_delta =  (W.transpose()*delta);
-    new_delta.array() *= active_func->gradient(activator).array();
+    new_delta.array() *= active_func->gradient(former_activator, input).array();
 
     return new_delta;
 

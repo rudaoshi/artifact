@@ -12,16 +12,19 @@ set(srcfiles
     utils/matrix_io_txt.cpp
 )
 
+set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
+find_package(Eigen3 REQUIRED)
+
+include_directories(EIGEN3_INCLUDE_DIR)
 
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++0x -O2")
-			SET(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
-			include_directories(${CMAKE_SOURCE_DIR}/artifact/include /opt/local/include /opt/local/include/eigen3)
-			link_directories(/opt/local/lib)
-			add_library(artifact SHARED ${srcfiles})
-			target_link_libraries(artifact boost_filesystem boost_system)
+    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++0x -O2")
+    SET(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
+    include_directories(${CMAKE_SOURCE_DIR}/artifact/include /usr/include/eigen3)
+    add_library(artifact SHARED ${srcfiles})
+    target_link_libraries(artifact boost_filesystem boost_system)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 

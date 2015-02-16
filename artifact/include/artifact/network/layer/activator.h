@@ -18,8 +18,12 @@ namespace artifact
 
             virtual VectorType activate(const VectorType & v) = 0;
             virtual VectorType gradient(const VectorType & v) = 0;
+            virtual VectorType gradient(const VectorType & v,
+                    const VectorType & activated) = 0;
             virtual MatrixType activate(const MatrixType & m) = 0;
             virtual MatrixType gradient(const MatrixType & m) = 0;
+            virtual MatrixType gradient(const MatrixType & v,
+                    const MatrixType & activated) = 0;
         };
 
 
@@ -29,8 +33,12 @@ namespace artifact
 
             virtual VectorType activate(const VectorType & v);
             virtual VectorType gradient(const VectorType & v);
+            virtual VectorType gradient(const VectorType & v,
+                    const VectorType & activated);
             virtual MatrixType activate(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m);
+            virtual MatrixType gradient(const MatrixType & m,
+                    const MatrixType & activated);
         };
 
         class logistic_activator: public activator
@@ -39,8 +47,12 @@ namespace artifact
 
             virtual VectorType activate(const VectorType & v);
             virtual VectorType gradient(const VectorType & v);
+            virtual VectorType gradient(const VectorType & v,
+                    const VectorType & activated);
             virtual MatrixType activate(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m);
+            virtual MatrixType gradient(const MatrixType & m,
+                    const MatrixType & activated);
         };
 
         class softmax_activator: public activator
@@ -49,8 +61,12 @@ namespace artifact
 
             virtual VectorType activate(const VectorType & v);
             virtual VectorType gradient(const VectorType & v);
+            virtual VectorType gradient(const VectorType & v,
+                    const VectorType & activated);
             virtual MatrixType activate(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m);
+            virtual MatrixType gradient(const MatrixType & m,
+                    const MatrixType & activated);
         };
     }
 }

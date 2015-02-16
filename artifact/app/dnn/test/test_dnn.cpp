@@ -87,8 +87,8 @@ SCENARIO( "dnn can be optimized correctly", "[dnn_optimization]" ) {
 
     GIVEN( "network created" ) {
 
-        vector<int> layer_sizes = {25,500,500,1000,500,500,1};
-        vector<string> layer_types = {"linear","linear","linear","linear","linear","logistic"};
+        vector<int> layer_sizes = {25,50,50,1};
+        vector<string> layer_types = {"linear","linear","logistic"};
         string net_loss = "mse";
 
         network_architecture arch;
@@ -116,20 +116,26 @@ SCENARIO( "dnn can be optimized correctly", "[dnn_optimization]" ) {
 
         WHEN("gradient is calculated") {
 
-            auto temp = net.predict(X);
-
-            std::cerr << "begin test gradient" << std::endl;
-
             VectorType param = net.get_parameter();
             VectorType gradient(param.size());
             NumericType obj_val = 0.0;
 
             tie(obj_val, gradient) = net.gradient(X, y);
+            std::cerr << " gradient:" << std::endl;
+
+            for (int i = 0; i < gradient.size() ; i++)
+            {
+                std::cerr << gradient(i) << std::endl;
+            }
 
             THEN(" it must be approximately equal to the numerical one")
             {
                 VectorType n_gradient = numerical_gradient(net, param, X, y);
-
+                std::cerr << " n_gradient:" << std::endl;
+                for (int i = 0; i < n_gradient.size() ; i++)
+                {
+                    std::cerr << n_gradient(i) << std::endl;
+                }
                 REQUIRE((gradient - n_gradient).norm() < 1e-3);
 
             }

@@ -51,7 +51,9 @@ namespace artifact
                     const VectorType & y);
 
             MatrixType backprop_delta(const MatrixType & delta,
-                    const MatrixType & activator);
+                    const MatrixType & former_activator,
+                    const MatrixType & input
+                    );
 
             pair<MatrixType, MatrixType> predict_with_activator(const MatrixType & X);
 

@@ -9,10 +9,9 @@ add_subdirectory(test)
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++0x -O2")
 			SET(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
-			include_directories(${CMAKE_SOURCE_DIR}/artifact/include /usr/local/include /usr/local/include/eigen3)
-			link_directories(/usr/local/lib)
+			include_directories(${CMAKE_SOURCE_DIR}/artifact/include /usr/include /usr/include/eigen3)
 			add_executable(dnn ${srcfiles})
-			target_link_libraries(dnn artifact boost_filesystem boost_system,boost_program_options)
+			target_link_libraries(dnn artifact boost_filesystem boost_system boost_program_options)
 ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
