@@ -44,16 +44,33 @@ namespace artifact
 
         public:
 
-            pair<MatrixType, VectorType> compute_param_gradient(const MatrixType & input, const MatrixType & delta);
+            /**
+            * Following are group of methods used in back-prop algorithm
+            * Because the back-prop of delta involves two layers, it is difficult to write it gracefully.
+            * Insted, we back-prop loss-gradient from one layer, and then compute delta in the former layer
+            */
+            MatrixType compute_loss_gradient(const MatrixType & output, const VectorType & y);
+
+            MatrixType backprop_loss_gradient(const MatrixType & delta);
 
             MatrixType compute_delta(const MatrixType & activator,
                     const MatrixType & output,
-                    const VectorType & y);
+                    const MatrixType & loss_gradient);
 
-            MatrixType backprop_delta(const MatrixType & delta,
-                    const MatrixType & former_activator,
-                    const MatrixType & input
-                    );
+            pair<MatrixType, VectorType> compute_param_gradient(const MatrixType & input, const MatrixType & delta);
+
+
+
+//            MatrixType compute_delta(const MatrixType & activator,
+//                    const MatrixType & output,
+//                    const VectorType & y);
+
+
+
+//            MatrixType backprop_delta(const MatrixType & delta,
+//                    const MatrixType & former_activator,
+//                    const MatrixType & input
+//                    );
 
             pair<MatrixType, MatrixType> predict_with_activator(const MatrixType & X);
 

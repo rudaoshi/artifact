@@ -16,8 +16,7 @@ VectorType linear_activator::gradient(const VectorType & v)
 }
 
 
-VectorType linear_activator::gradient(const VectorType & v,
-        const VectorType & activated)
+VectorType linear_activator::gradient(const VectorType & v, const VectorType & activated)
 {
     return VectorType::Ones(v.size());
 }
@@ -35,8 +34,7 @@ MatrixType linear_activator::gradient(const MatrixType & m)
     return MatrixType::Ones(m.rows(), m.cols());
 }
 
-MatrixType linear_activator::gradient(const MatrixType & m,
-        const MatrixType & activated)
+MatrixType linear_activator::gradient(const MatrixType & m, const MatrixType & activated)
 {
     return MatrixType::Ones(m.rows(), m.cols());
 }

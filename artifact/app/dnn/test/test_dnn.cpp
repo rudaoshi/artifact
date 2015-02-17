@@ -88,7 +88,7 @@ SCENARIO( "dnn can be optimized correctly", "[dnn_optimization]" ) {
     GIVEN( "network created" ) {
 
         vector<int> layer_sizes = {25,50,50,1};
-        vector<string> layer_types = {"linear","linear","logistic"};
+        vector<string> layer_types = {"linear","logistic","linear"};
         string net_loss = "mse";
 
         network_architecture arch;
@@ -111,6 +111,25 @@ SCENARIO( "dnn can be optimized correctly", "[dnn_optimization]" ) {
                 REQUIRE(X.cols() == y.size());
             }
 
+
+        }
+
+        WHEN( "parameter can be get and set ")
+        {
+            NumericType obj = net.objective(X,y );
+            VectorType parameter = net.get_parameter();
+            MatrixType first_layer_W = net.get_layer(0).W;
+            parameter(0) = 500;
+            net.set_parameter(parameter);
+            VectorType new_param = net.get_parameter();
+            NumericType new_obj = net.objective(X, y);
+            MatrixType new_first_layer_W = net.get_layer(0).W;
+
+            THEN(" the object should change after parameter is changed")
+            {
+                REQUIRE((new_first_layer_W - first_layer_W).norm() > 100);
+                REQUIRE(abs(new_obj-obj) > 1e-3 );
+            }
 
         }
 

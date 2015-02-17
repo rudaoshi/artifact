@@ -41,12 +41,14 @@ VectorType artifact::optimization::numerical_gradient(optimizable & machine, con
                 [&](NumericType x) -> NumericType
                 {
                     VectorType p = param;
-                    p[i] = x;
+                    p(i) = x;
+
                     machine.set_parameter(p);
-                    return machine.objective(X, y);
+
+                    auto val = machine.objective(X, y);
+                    return val;
                 } );
 
-//        std::cerr << i << std::endl;
     }
 
     return dp;

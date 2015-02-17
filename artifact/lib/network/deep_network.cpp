@@ -23,7 +23,7 @@ MatrixType deep_network::predict(const MatrixType & X)
 
     MatrixType result = X;
 
-    for (auto layer: this->layers)
+    for (auto & layer: this->layers)
     {
         result = layer.predict(result);
     }
@@ -38,7 +38,7 @@ VectorType deep_network::predict(const VectorType & x)
 
     VectorType result = x;
 
-    for (auto layer: this->layers)
+    for (auto & layer: this->layers)
     {
         result = layer.predict(result);
     }
@@ -52,7 +52,7 @@ vector<pair<MatrixType, MatrixType>> deep_network::feed_forward(const MatrixType
 {
     vector<pair<MatrixType, MatrixType>> result;
     MatrixType cur_layer_input = input;
-    for (auto layer: this->layers)
+    for (auto & layer: this->layers)
     {
         auto feed_forward_info = layer.predict_with_activator(cur_layer_input);
         result.push_back(feed_forward_info);
@@ -68,7 +68,7 @@ vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixTy
         const vector<pair<MatrixType, MatrixType>> & laywise_output)
 {
 
-    MatrixType delta;
+    MatrixType loss_gradient;
 
     vector<pair<MatrixType, VectorType>> gradients(layers.size());
 
@@ -87,28 +87,26 @@ vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixTy
         mlp_layer * layer = &this->layers[i];
         if (layer->is_loss_contributor())
         {
-            if (delta.size() == 0) {
-                delta = layer->compute_delta(*cur_activator, *cur_ouput, y);
+            MatrixType cur_loss_gradient = layer->compute_loss_gradient(*cur_ouput, y);
+
+            if (loss_gradient.size() == 0)
+            {
+                loss_gradient = cur_loss_gradient;
             }
-            else {
-                delta += layer->compute_delta(*cur_activator, *cur_ouput, y);
+            else
+            {
+                loss_gradient += cur_loss_gradient;
             }
+
         }
-
-
+        MatrixType delta = layer->compute_delta(*cur_activator, *cur_ouput, loss_gradient);
 
         gradients[i] = layer->compute_param_gradient(
                 *cur_input, delta);
 
 
-        if (i > 0)
-        {
-            const MatrixType * former_activator = & laywise_output[i-1].first;
+        loss_gradient = layer->backprop_loss_gradient(delta);
 
-            delta = layer->backprop_delta(
-                    delta, * former_activator, *cur_input);
-
-        }
 
     }
 
@@ -147,7 +145,7 @@ tuple<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
     NumericType loss =  last_layer->loss_func->loss(last_layer_output, y);
 
     int total_param_num = 0;
-    for (auto layer : this->layers)
+    for (auto & layer : this->layers)
     {
         total_param_num += (layer.get_input_dim() + 1) * layer.get_output_dim();
     }
@@ -155,7 +153,7 @@ tuple<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
     VectorType Wb_gradient = VectorType::Zero(total_param_num);
 
     int start_idx = 0;
-    for (auto Wb_pair : backprop_result)
+    for (auto & Wb_pair : backprop_result)
     {
         Map<MatrixType>(Wb_gradient.data()+ start_idx, Wb_pair.first.rows(),Wb_pair.first.cols()) = Wb_pair.first;
         start_idx += Wb_pair.first.size();
@@ -170,7 +168,7 @@ tuple<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
 VectorType deep_network::get_parameter() {
 
     int total_param_num = 0;
-    for (auto layer : this->layers)
+    for (auto & layer : this->layers)
     {
         total_param_num += (layer.get_input_dim() + 1) * layer.get_output_dim();
     }
@@ -178,7 +176,7 @@ VectorType deep_network::get_parameter() {
     VectorType Wb = VectorType::Zero(total_param_num);
 
     int start_idx = 0;
-    for (auto layer : this->layers)
+    for (auto & layer : this->layers)
     {
         Map<MatrixType>(Wb.data()+ start_idx,layer.get_output_dim(),layer.get_input_dim()) = layer.W;
         start_idx += layer.get_input_dim()  * layer.get_output_dim();
@@ -191,7 +189,7 @@ VectorType deep_network::get_parameter() {
 void deep_network::set_parameter(const VectorType &parameter_)
 {
     int start_idx = 0;
-    for (auto layer : this->layers)
+    for (auto & layer : this->layers)
     {
         layer.W = Map<const MatrixType>(parameter_.data()+ start_idx,layer.get_output_dim(),layer.get_input_dim()) ;
         start_idx += layer.get_input_dim()  * layer.get_output_dim();

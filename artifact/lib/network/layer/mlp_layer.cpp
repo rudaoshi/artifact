@@ -61,31 +61,51 @@ pair<MatrixType, MatrixType> mlp_layer::predict_with_activator(const MatrixType 
 }
 
 
-MatrixType mlp_layer::compute_delta(
-        const MatrixType & activator,
+MatrixType mlp_layer::compute_loss_gradient(const MatrixType & output, const VectorType & y)
+{
+    return loss_func->gradient(output, y);
+}
+
+MatrixType mlp_layer::backprop_loss_gradient(const MatrixType & delta)
+{
+    return (W.transpose()*delta);
+}
+
+MatrixType mlp_layer::compute_delta(const MatrixType & activator,
         const MatrixType & output,
-        const VectorType & y)
+        const MatrixType & loss_gradient)
 {
-    //output_delta = 2/N*((Reconstruction - X).*Reconstruction.*(1-Reconstruction));
-
-    if (not loss_func)
-    {
-        throw runtime_error("The layer is not assigned with an objective.");
-    }
-    return active_func->gradient(activator, output).array() * loss_func->gradient(output, y).array();
+    MatrixType delta = loss_gradient;
+    delta.array() *= active_func->gradient(activator, output).array() ;
+    return delta;
 }
 
-MatrixType mlp_layer::backprop_delta(const MatrixType & delta,
-        const MatrixType & former_activator,
-        const MatrixType & input)
-{
 
-    MatrixType new_delta =  (W.transpose()*delta);
-    new_delta.array() *= active_func->gradient(former_activator, input).array();
+//MatrixType mlp_layer::compute_delta(
+//        const MatrixType & activator,
+//        const MatrixType & output,
+//        const VectorType & y)
+//{
+//    //output_delta = 2/N*((Reconstruction - X).*Reconstruction.*(1-Reconstruction));
+//
+//    if (not loss_func)
+//    {
+//        throw runtime_error("The layer is not assigned with an objective.");
+//    }
+//    return active_func->gradient(activator, output).array() * loss_func->gradient(output, y).array();
+//}
 
-    return new_delta;
-
-}
+//MatrixType mlp_layer::backprop_delta(const MatrixType & delta,
+//        const MatrixType & former_activator,
+//        const MatrixType & input)
+//{
+//
+//    MatrixType new_delta =  (W.transpose()*delta);
+//    new_delta.array() *= active_func->gradient(former_activator, input).array();
+//
+//    return new_delta;
+//
+//}
 
 bool mlp_layer::is_loss_contributor() const
 {
