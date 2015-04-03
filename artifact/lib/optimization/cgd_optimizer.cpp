@@ -5,27 +5,28 @@
  *      Author: sun
  */
 
-#include <liblearning/optimization/conjugate_gradient_optimizer.h>
-
-
-#include <iostream>
-
-using namespace optimization;
-
-conjugate_gradient_optimizer::conjugate_gradient_optimizer(int max_iter_, NumericType ftol_):max_iter(max_iter_),ftol(ftol_)
-{
-
-}
-
-conjugate_gradient_optimizer::~conjugate_gradient_optimizer()
-{
-}
-
 #include <cmath>
 
 #include <limits>
 
 using namespace std;
+
+#include <artifact/optimization/cgd_optimizer.h>
+
+using namespace artifact::optimization;
+
+cgd_optimizer::cgd_optimizer()
+{
+	this->max_epoches = 10;
+	this->ftol = 1e-6;
+}
+
+
+cgd_optimizer::~cgd_optimizer(void)
+{
+}
+
+
 
 template <typename F>
 void mnbrak(NumericType &ax, NumericType &bx, NumericType &cx, NumericType &fa, NumericType &fb, NumericType &fc, 	const F & func);
@@ -33,13 +34,20 @@ void mnbrak(NumericType &ax, NumericType &bx, NumericType &cx, NumericType &fa, 
 template <typename F>
 NumericType brent(const NumericType ax, const NumericType bx, const NumericType cx, const F & f,	const NumericType tol, NumericType &xmin);
 
-void linmin(VectorType &p, VectorType &xi, NumericType &fret, optimize_objective& obj);
+template <typename F>
+void linmin(VectorType &p, VectorType &xi, NumericType &fret, const F & func);
 
 
-tuple<NumericType, VectorType> conjugate_gradient_optimizer::optimize(optimize_objective& obj, const VectorType & x0)
+//tuple<NumericType, VectorType> conjugate_gradient_optimizer::optimize(optimize_objective& obj, const VectorType & x0)
+VectorType cgd_optimizer::optimize(optimizable & obj,
+        const VectorType & x0,
+        const MatrixType & X,
+        const MatrixType * y // nullptr for unsupervised optimizer
+)
 {
 
 	// void NR::frprmn(Vec_IO_DP &p, const DP ftol, int &iter, DP &fret, DP func(Vec_I_DP &), void dfunc(Vec_I_DP &, Vec_O_DP &))
+	gradient_optimizable & opt = dynamic_cast<gradient_optimizable &>(obj);
 
 	const NumericType EPS=1.0e-8;
 
@@ -49,32 +57,44 @@ tuple<NumericType, VectorType> conjugate_gradient_optimizer::optimize(optimize_o
 	int n=x0.size();
 	VectorType p(n), g(n),h(n),xi(n);
 
+    gradient_optimizable & g_obj = dynamic_cast<gradient_optimizable &>(obj);
+
 	p = x0;
 
 //	std::cout << " Calculating First Value Diff"  << std::endl ;
-	tie(fp,xi) = obj.value_diff(p);
+    obj.set_parameter(p);
+	tie(fp,xi) = g_obj.gradient( X, y);
 //	std::cout << " First Value Diff Calculated"  << std::endl ;
-	obj.progress_notification(p,0);
+//	obj.progress_notification(p,0);
 	fret = fp;
 	g = - xi;
 	xi = h = g;
 
-	for (int its=0;its<max_iter;its++) {
+	for (int its=0;its<this->max_epoches;its++) {
 		
-		iter=its;
+//		iter=its;
 
 //		std::cout << " Calculating Linmin of Iter: " << iter  << std::endl ;
-		linmin(p,xi,fret,obj);
+        // convert to a normal multi-variable function.
+        auto object_function = [&](VectorType param)
+        {
+            g_obj.set_parameter(param);
+            return g_obj.objective(X,y);
+        };
+
+		linmin(p,xi,fret, object_function);
 //		std::cout << " Linmin of Iter: " << iter  <<  " Calculated " << std::endl ;
 //		std::cout << "[" << fret << "]" << std::endl;
 
-		obj.progress_notification(p,its+1);
+//		obj.progress_notification(p,its+1);
 
-		if (2.0*fabs(fret-fp) <= ftol*(fabs(fret)+fabs(fp)+EPS))
+		if (2.0*fabs(fret-fp) <= this->ftol*(fabs(fret)+fabs(fp)+EPS))
 		{
 			break;
 		}
-		tie(fp,xi) = obj.value_diff(p);
+        obj.set_parameter(p);
+        tie(fp,xi) = g_obj.gradient( X, y);
+
 		gg = g.squaredNorm();
 		dgg = xi.dot(xi+g);
 
@@ -88,37 +108,34 @@ tuple<NumericType, VectorType> conjugate_gradient_optimizer::optimize(optimize_o
 
 	}
 
-	return make_tuple(fret,p);
-
-}
-
-shared_ptr<optimizer> conjugate_gradient_optimizer::clone()
-{
-	shared_ptr<optimizer> ptr(new conjugate_gradient_optimizer(*this));
-
-	return ptr;
+	return p;
 
 }
 
 
-class mnbrak_obj
-{
-	const VectorType & p;
-	const VectorType & xi;
 
-	optimize_objective& obj;
-public:
-	mnbrak_obj(const VectorType &p_, const VectorType &xi_,optimize_objective& obj_):p(p_),xi(xi_),obj(obj_)
-	{
-	}
+//class mnbrak_obj
+//{
+//	const VectorType & p;
+//	const VectorType & xi;
+//
+//    optimizable& obj;
+//public:
+//	mnbrak_obj(const VectorType &p_, const VectorType &xi_,optimizable& obj_):p(p_),xi(xi_),obj(obj_)
+//	{
+//	}
+//
+//	NumericType operator()(NumericType x) const
+//	{
+//		VectorType xt = p + x*xi;
+//        return obj.value(xt);
+//	}
+//
+//};
 
-	NumericType operator()(NumericType x) const
-	{
-		VectorType xt = p + x*xi; return obj.value(xt);
-	}
 
-};
-void linmin(VectorType &p, VectorType &xi, NumericType &fret, optimize_objective& obj)
+template <typename F>
+void linmin(VectorType &p, VectorType &xi, NumericType &fret, const F & func)
 {
 	int j;
 	const NumericType TOL=1.0e-8;
@@ -128,8 +145,16 @@ void linmin(VectorType &p, VectorType &xi, NumericType &fret, optimize_objective
 	xx=1.0;
 
 //	auto f = [&](NumericType x)-> NumericType {VectorType xt = p + x*xi; return obj.value(xt);};
-	mnbrak(ax,xx,bx,fa,fx,fb,mnbrak_obj(p,xi,obj));
-	fret=brent(ax,xx,bx,mnbrak_obj(p,xi,obj),TOL,xmin);
+
+    // convert to line search objective function.
+    auto f = [&](NumericType x)
+    {
+        VectorType xt = p + x*xi;
+        return func(xt);
+    };
+
+	mnbrak(ax,xx,bx,fa,fx,fb, f);
+	fret=brent(ax,xx,bx,f,TOL,xmin);
 	xi *= xmin;
 	p += xi;
 
@@ -205,8 +230,9 @@ void mnbrak(NumericType &ax, NumericType &bx, NumericType &cx, NumericType &fa, 
 
 		if (loop_num > 100)
 		{
-			std::cout <<"X = " <<  ax << ' ' << bx << ' ' << cx << std::endl;
-			std::cout <<"fX = " <<   fa << ' ' << fb << ' ' << fc << std::endl;
+//			std::cout <<"X = " <<  ax << ' ' << bx << ' ' << cx << std::endl;
+//			std::cout <<"fX = " <<   fa << ' ' << fb << ' ' << fc << std::endl;
+            break;
 		}
 	}
 }

@@ -29,7 +29,7 @@ namespace artifact
             int output_dim;
 
             MatrixType W;
-            VectorType b;
+            RowVectorType b;
 
             std::shared_ptr<loss_function> loss_func;
 
@@ -49,7 +49,7 @@ namespace artifact
             * Because the back-prop of delta involves two layers, it is difficult to write it gracefully.
             * Insted, we back-prop loss-gradient from one layer, and then compute delta in the former layer
             */
-            MatrixType compute_loss_gradient(const MatrixType & output, const VectorType & y);
+            MatrixType compute_loss_gradient(const MatrixType & output, const MatrixType & y);
 
             MatrixType backprop_loss_gradient(const MatrixType & delta);
 
@@ -57,7 +57,7 @@ namespace artifact
                     const MatrixType & output,
                     const MatrixType & loss_gradient);
 
-            pair<MatrixType, VectorType> compute_param_gradient(const MatrixType & input, const MatrixType & delta);
+            pair<MatrixType, RowVectorType> compute_param_gradient(const MatrixType & input, const MatrixType & delta);
 
 
 
@@ -79,7 +79,7 @@ namespace artifact
 
             virtual void set_loss(const shared_ptr<loss_function> & loss_func_ );
 
-            virtual VectorType predict(const VectorType &testdata);
+            virtual RowVectorType predict(const RowVectorType &testdata);
 
             virtual MatrixType
                     predict(const MatrixType &test_set);

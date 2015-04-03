@@ -4,19 +4,19 @@
 using namespace artifact::network;
 
 
-VectorType linear_activator::activate(const VectorType & v)
+RowVectorType linear_activator::activate(const RowVectorType & v)
 {
     return v;
 }
 
 
-VectorType linear_activator::gradient(const VectorType & v)
+RowVectorType linear_activator::gradient(const RowVectorType & v)
 {
     return VectorType::Ones(v.size());
 }
 
 
-VectorType linear_activator::gradient(const VectorType & v, const VectorType & activated)
+RowVectorType linear_activator::gradient(const RowVectorType & v, const RowVectorType & activated)
 {
     return VectorType::Ones(v.size());
 }
@@ -38,7 +38,7 @@ MatrixType linear_activator::gradient(const MatrixType & m, const MatrixType & a
 {
     return MatrixType::Ones(m.rows(), m.cols());
 }
-VectorType logistic_activator::activate(const VectorType & v)
+RowVectorType logistic_activator::activate(const RowVectorType & v)
 {
 #ifdef USE_GPU
 
@@ -75,13 +75,13 @@ MatrixType logistic_activator::activate(const MatrixType & m)
 
 
 
-VectorType logistic_activator::gradient(const VectorType & v)
+RowVectorType logistic_activator::gradient(const RowVectorType & v)
 {
     throw runtime_error("This should not be used in optimization");
 }
 
-VectorType logistic_activator::gradient(const VectorType & m,
-        const VectorType & activated)
+RowVectorType logistic_activator::gradient(const RowVectorType & m,
+        const RowVectorType & activated)
 {
     return activated.array() * (1 - activated.array());
 }

@@ -28,12 +28,14 @@ value_type derivative(const value_type x, const value_type dx, function_type fun
 
 #include <iostream>
 
-VectorType artifact::optimization::numerical_gradient(optimizable & machine, const VectorType & param,  const MatrixType & X, const VectorType & y)
+
+
+VectorType artifact::optimization::numerical_gradient(optimizable & machine, const VectorType & param,  const MatrixType & X, const MatrixType * y)
 {
 
     VectorType dp = VectorType::Zero(param.size());
 
-    NumericType dx = 0.001; //std::pow(std::numeric_limits<NumericType>::epsilon(), 1.0/3.0);
+    NumericType dx = std::pow(std::numeric_limits<NumericType>::epsilon(), 1.0/3.0);
 
     for (int i = 0; i < param.size(); i++)
     {

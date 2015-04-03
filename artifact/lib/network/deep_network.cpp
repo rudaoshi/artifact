@@ -33,10 +33,10 @@ MatrixType deep_network::predict(const MatrixType & X)
 
 }
 
-VectorType deep_network::predict(const VectorType & x)
+RowVectorType deep_network::predict(const RowVectorType & x)
 {
 
-    VectorType result = x;
+    RowVectorType result = x;
 
     for (auto & layer: this->layers)
     {
@@ -63,14 +63,14 @@ vector<pair<MatrixType, MatrixType>> deep_network::feed_forward(const MatrixType
     return result;
 }
 #include <iostream>
-vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixType & input,
-        const VectorType & y,
+vector<pair<MatrixType, RowVectorType>> deep_network::back_propagate(const MatrixType & input,
+        const MatrixType & y,
         const vector<pair<MatrixType, MatrixType>> & laywise_output)
 {
 
     MatrixType loss_gradient;
 
-    vector<pair<MatrixType, VectorType>> gradients(layers.size());
+    vector<pair<MatrixType, RowVectorType>> gradients(layers.size());
 
     for (int i = layers.size() - 1; i >= 0; i --)
     {
@@ -115,7 +115,7 @@ vector<pair<MatrixType, VectorType>> deep_network::back_propagate(const MatrixTy
 
 
 NumericType deep_network::objective(const MatrixType & X,
-        const VectorType & y)
+        const MatrixType * y)
 {
     /**
     * Currently, objective at last layer is supported;
@@ -129,13 +129,13 @@ NumericType deep_network::objective(const MatrixType & X,
 
 
 tuple<NumericType, VectorType> deep_network::gradient(const MatrixType & x,
-        const VectorType & y)
+        const MatrixType * y)
 {
 
     vector<pair<MatrixType, MatrixType>> forward_result =  deep_network::feed_forward(x);
 
 
-    vector<pair<MatrixType, VectorType>> backprop_result = deep_network::back_propagate(x,y,
+    vector<pair<MatrixType, RowVectorType>> backprop_result = deep_network::back_propagate(x, *y,
             forward_result);
 
 
@@ -178,7 +178,7 @@ VectorType deep_network::get_parameter() {
     int start_idx = 0;
     for (auto & layer : this->layers)
     {
-        Map<MatrixType>(Wb.data()+ start_idx,layer.get_output_dim(),layer.get_input_dim()) = layer.W;
+        Map<MatrixType>(Wb.data()+ start_idx,layer.get_input_dim(),layer.get_output_dim()) = layer.W;
         start_idx += layer.get_input_dim()  * layer.get_output_dim();
         Map<VectorType>(Wb.data()+ start_idx, layer.get_output_dim()) = layer.b;
         start_idx += layer.get_output_dim();
@@ -191,7 +191,7 @@ void deep_network::set_parameter(const VectorType &parameter_)
     int start_idx = 0;
     for (auto & layer : this->layers)
     {
-        layer.W = Map<const MatrixType>(parameter_.data()+ start_idx,layer.get_output_dim(),layer.get_input_dim()) ;
+        layer.W = Map<const MatrixType>(parameter_.data()+ start_idx,layer.get_input_dim(),layer.get_output_dim()) ;
         start_idx += layer.get_input_dim()  * layer.get_output_dim();
         layer.b = Map<const VectorType>(parameter_.data()+ start_idx, layer.get_output_dim());
         start_idx += layer.get_output_dim();

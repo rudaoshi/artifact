@@ -16,10 +16,10 @@ namespace artifact
         {
         public:
 
-            virtual VectorType activate(const VectorType & v) = 0;
-            virtual VectorType gradient(const VectorType & v) = 0;
-            virtual VectorType gradient(const VectorType & v,
-                    const VectorType & activated) = 0;
+            virtual RowVectorType activate(const RowVectorType & v) = 0;
+            virtual RowVectorType gradient(const RowVectorType & v) = 0;
+            virtual RowVectorType gradient(const RowVectorType & v,
+                    const RowVectorType & activated) = 0;
             virtual MatrixType activate(const MatrixType & m) = 0;
             virtual MatrixType gradient(const MatrixType & m) = 0;
             virtual MatrixType gradient(const MatrixType & v,
@@ -31,10 +31,10 @@ namespace artifact
         {
         public:
 
-            virtual VectorType activate(const VectorType & v);
-            virtual VectorType gradient(const VectorType & v);
-            virtual VectorType gradient(const VectorType & v,
-                    const VectorType & activated);
+            virtual RowVectorType activate(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v,
+                    const RowVectorType & activated);
             virtual MatrixType activate(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m,
@@ -45,10 +45,10 @@ namespace artifact
         {
         public:
 
-            virtual VectorType activate(const VectorType & v);
-            virtual VectorType gradient(const VectorType & v);
-            virtual VectorType gradient(const VectorType & v,
-                    const VectorType & activated);
+            virtual RowVectorType activate(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v,
+                    const RowVectorType & activated);
             virtual MatrixType activate(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m,
@@ -59,10 +59,10 @@ namespace artifact
         {
         public:
 
-            virtual VectorType activate(const VectorType & v);
-            virtual VectorType gradient(const VectorType & v);
-            virtual VectorType gradient(const VectorType & v,
-                    const VectorType & activated);
+            virtual RowVectorType activate(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v,
+                    const RowVectorType & activated);
             virtual MatrixType activate(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m);
             virtual MatrixType gradient(const MatrixType & m,

@@ -1,6 +1,9 @@
 
 set(srcfiles 
     optimization/gd_optimizer.cpp
+    optimization/cgd_optimizer.cpp
+    optimization/sgd_optimizer.cpp
+    optimization/mt_sgd_optimizer.cpp
     optimization/numerical_gradient.cpp
 	network/layer/mlp_layer.cpp
 #    ./artifact/lib/network/restricted_boltzmann_machine.cpp
@@ -10,6 +13,7 @@ set(srcfiles
     network/layer/activator.cpp
     loss/loss.cpp
     utils/matrix_io_txt.cpp
+    utils/matrix_utils.cpp
 )
 
 
@@ -25,7 +29,7 @@ ENDIF(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 
 IF(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++0x -O2")
+			SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_FULLY_DYNAMIC_STRING -std=c++11 -O2")
 			SET(CMAKE_BUILD_TYPE CMAKE_CXX_FLAGS_RELEASE)
 			include_directories(${CMAKE_SOURCE_DIR}/artifact/include /usr/local/include /usr/local/include/eigen3)
 			link_directories(/usr/local/lib)

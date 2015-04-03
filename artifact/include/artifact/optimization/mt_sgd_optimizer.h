@@ -1,5 +1,5 @@
-#ifndef ARTIFACT_OPTIMIZATION_GD_OPTIMIZATION_H
-#define ARTIFACT_OPTIMIZATION_GD_OPTIMIZATION_H
+#ifndef ARTIFACT_OPTIMIZATION_MT_SGD_OPTIMIZATION_H
+#define ARTIFACT_OPTIMIZATION_MT_SGD_OPTIMIZATION_H
 
 
 
@@ -11,17 +11,20 @@ namespace artifact
     namespace optimization
     {
 
-        class gd_optimizer :
+
+        class mt_sgd_optimizer :
                 public optimizer
         {
         public:
             NumericType learning_rate;
             NumericType decay_rate;
+            int thread_num;
+            int batch_per_thread;
             int max_epoches;
 
         public:
-            gd_optimizer();
-            virtual ~gd_optimizer(void);
+            mt_sgd_optimizer();
+            virtual ~mt_sgd_optimizer(void);
 
             virtual VectorType optimize(
                     optimizable & obj,

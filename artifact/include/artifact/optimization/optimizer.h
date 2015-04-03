@@ -19,18 +19,21 @@ namespace artifact
 {
     namespace optimization
     {
+
         class optimizer
         {
         public:
 
-            virtual tuple<NumericType, VectorType> optimize(
+            virtual VectorType optimize(
                     optimizable & obj,
                     const VectorType & param0,
                     const MatrixType & X,
-                    const VectorType * y = nullptr  // nullptr for unsupervised optimizer
+                    const MatrixType * y = nullptr  // nullptr for unsupervised optimizer
                     ) = 0;
 
         };
+
+
     }
 }
 

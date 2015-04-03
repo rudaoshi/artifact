@@ -17,6 +17,7 @@ namespace po = boost::program_options;
 #include <artifact/network/network_creator.h>
 #include <artifact/network/network_trainer.h>
 #include <artifact/utils/matrix_io_txt.h>
+#include <artifact/optimization/gd_optimizer.h>
 
 using namespace artifact::network;
 using namespace artifact::utils;
@@ -74,6 +75,8 @@ int main(int argc, char ** argv)
     vector< string > layer_type_vector;
     boost::split( layer_type_vector, net_layer_types, boost::is_any_of(",") );
 
+    Eigen::initParallel	();
+
     network_architecture arch;
     arch.layer_sizes = layer_sizes;
     arch.activator_types = layer_type_vector;
@@ -82,17 +85,17 @@ int main(int argc, char ** argv)
     random_network_creator creator;
     deep_network net = creator.create(arch);
 
-    gd_training_setting training_settings;
-    training_settings.learning_rate = learning_rate;
-    training_settings.decay_rate = decay_rate;
-    training_settings.max_epoches = max_epoches;
+    gd_optimizer optimizer_;
+    optimizer_.learning_rate = learning_rate;
+    optimizer_.decay_rate = decay_rate;
+    optimizer_.max_epoches = max_epoches;
 
-    gd_network_trainer trainer;
+    optimization_trainer trainer(optimizer_);
 
     MatrixType X = load_matrix_from_txt(train_data_path_prefix + ".X");
-    VectorType y = load_vector_from_txt(train_data_path_prefix + ".y");
+    MatrixType y = load_matrix_from_txt(train_data_path_prefix + ".y");
 
 
-    net = trainer.train(net,training_settings,X,&y);
+    net = trainer.train(net,X,&y);
 
 }

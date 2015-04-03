@@ -67,9 +67,10 @@
 	#include <Eigen/Core>
     #include <Eigen/QR>
 	using namespace Eigen;
-	#define NumericType double
-	#define MatrixType MatrixXd
-	#define VectorType VectorXd
+	#define NumericType float
+	#define MatrixType MatrixXf
+	#define VectorType VectorXf
+    #define RowVectorType RowVectorXf
 
 	#define EigenMatrixType Eigen::MatrixXd
 	#define EigenVectorType Eigen::VectorXd
@@ -77,6 +78,7 @@
 	#define InterfaceVectorType VectorXd
 
 	using Eigen::Map;
+    using Eigen::Block;
 
 #endif
 

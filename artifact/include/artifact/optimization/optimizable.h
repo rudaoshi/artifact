@@ -24,7 +24,7 @@ namespace artifact
             virtual void set_parameter(const VectorType &parameter_) = 0;
 
             virtual NumericType objective(const MatrixType & x,
-                    const VectorType & y) = 0;
+                    const MatrixType * y = 0) = 0;
 
         };
 
@@ -40,7 +40,7 @@ namespace artifact
             * partial output/partial param
             */
             virtual tuple<NumericType, VectorType> gradient(const MatrixType & x,
-                    const VectorType & y) = 0;
+                    const MatrixType * y = 0) = 0;
 
         };
     }

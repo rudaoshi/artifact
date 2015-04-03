@@ -5,19 +5,15 @@
 using namespace artifact::losses;
 
 NumericType mse_loss::loss(const MatrixType &x,
-            const VectorType & y) {
+            const MatrixType * y) {
 
-    if (x.rows() != 1)
-    {
-        throw runtime_error("MSE Loss accecpt vector outputs, not a matrix");
-    }
 
-    return (x.row(0) - y.transpose()).array().pow(2).sum();
+    return (x - (*y)).array().pow(2).sum();
 
 }
 
 MatrixType mse_loss::gradient(const MatrixType &x,
-            const VectorType & y)
+            const MatrixType * y)
 {
-    return 2*(x.row(0) - y.transpose());
+    return 2*(x - (*y));
 }

@@ -14,13 +14,13 @@ namespace artifact
         public:
 
             virtual NumericType loss(const MatrixType &x,
-                            const VectorType & y) = 0;
+                            const MatrixType * y = 0) = 0;
 
             /**
             * partial cost / partial x
             */
             virtual MatrixType gradient(const MatrixType &x,
-                            const VectorType & y) = 0;
+                            const MatrixType * y = 0) = 0;
 
         };
 
@@ -28,13 +28,13 @@ namespace artifact
         public:
 
             virtual NumericType loss(const MatrixType &x,
-                    const VectorType & y);
+                    const MatrixType * y);
 
             /**
             * partial cost / partial x
             */
             virtual MatrixType gradient(const MatrixType &x,
-                    const VectorType & y);
+                    const MatrixType * y);
 
         };
     }

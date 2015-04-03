@@ -13,7 +13,7 @@ namespace artifact {
 
     namespace optimization {
 
-        VectorType numerical_gradient(optimizable & machine, const VectorType & param, const MatrixType & X, const VectorType & y);
+        VectorType numerical_gradient(optimizable & machine, const VectorType & param, const MatrixType & X, const MatrixType * y);
 
     }
 }

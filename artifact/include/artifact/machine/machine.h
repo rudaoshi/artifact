@@ -7,20 +7,21 @@
 namespace artifact
 {
     namespace machines {
-        /* machine_maker class.
-         *
-         * machine_maker builds machines from input data. All training algorithms
-         * in this library are subclass of machine_maker
-         */
 
+        /**
+        * machine class
+        *
+        * Machine predict something for a data set.
+        * The data set is a matrix. Rows are samples and columns are observations/features.
+        */
         class machine {
 
         public:
 
-            virtual VectorType predict(const VectorType &testdata) = 0;
+            virtual RowVectorType predict(const RowVectorType &testdata) = 0;
 
             virtual MatrixType
-                    predict(const MatrixType &test_set) = 0;
+                    predict(const MatrixType & X) = 0;
         };
 
 

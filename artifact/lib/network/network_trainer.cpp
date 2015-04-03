@@ -1,22 +1,23 @@
 
 #include <artifact/network/network_trainer.h>
 #include <artifact/optimization/gd_optimizer.h>
+#include <artifact/optimization/sgd_optimizer.h>
 
 using namespace artifact::network;
 
 
-deep_network gd_network_trainer::train(deep_network & net,
-        const training_setting & setting,
-        const MatrixType & X, const VectorType * y,
-        const training_context * context)
+optimization_trainer::optimization_trainer(optimizer & optimizer__)
+:optimizer_(optimizer__)
 {
-    const gd_training_setting & gd_setting = static_cast<const gd_training_setting &>(setting);
 
-    gd_optimizer optimizer(gd_setting.learning_rate, gd_setting.decay_rate, gd_setting.max_epoches);
+}
+deep_network optimization_trainer::train(deep_network & net,
+        const MatrixType & X, const MatrixType * y)
+{
 
     VectorType p = net.get_parameter();
     NumericType fval = 0;
-    tie(fval, p) = optimizer.optimize(net, p, X, y);
+    p = optimizer_.optimize(net, p, X, y);
 
     net.set_parameter(p);
 

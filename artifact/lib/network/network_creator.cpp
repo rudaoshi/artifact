@@ -59,8 +59,8 @@ deep_network random_network_creator::create(const network_architecture & archite
 
         mlp_layer layer(input_dim, output_dim, activate_func);
 
-        layer.W = MatrixType::Random(output_dim, input_dim) * random_scale;
-        layer.b = VectorType::Zero(output_dim);
+        layer.W = MatrixType::Random(input_dim,output_dim) * random_scale;
+        layer.b = RowVectorType::Zero(output_dim);
 
         network.add_layer(layer);
 

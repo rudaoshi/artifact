@@ -19,7 +19,7 @@ int mlp_layer::get_output_dim() const
 }
 
 
-mlp_layer::mlp_layer(int input_dim_, int output_dim_, shared_ptr<activator>  active_func_)
+mlp_layer::mlp_layer(int input_dim_, int output_dim_, shared_ptr<activator> active_func_)
     : input_dim(input_dim_), output_dim(output_dim_), active_func(active_func_)
 {
 
@@ -30,20 +30,19 @@ mlp_layer::mlp_layer(int input_dim_, int output_dim_, shared_ptr<activator>  act
 MatrixType mlp_layer::predict(const MatrixType & X)
 {
 
-    MatrixType act_val = W*X;
+    MatrixType act_val = X*W;
 
-    act_val.colwise() += b;
+    act_val.rowwise() += b;
     return active_func->activate(act_val);
 
 
 }
 
-VectorType mlp_layer::predict(const VectorType & x)
+RowVectorType mlp_layer::predict(const RowVectorType & x)
 {
 
-    VectorType act_val = W*x;
+    RowVectorType act_val = x*W + b;
 
-    act_val.colwise() += b;
     return active_func->activate(act_val);
 
 }
@@ -52,23 +51,23 @@ VectorType mlp_layer::predict(const VectorType & x)
 pair<MatrixType, MatrixType> mlp_layer::predict_with_activator(const MatrixType & X)
 {
 
-    MatrixType act_val = W*X;
+    MatrixType act_val = X*W;
 
-    act_val.colwise() += b;
+    act_val.rowwise() += b;
     return make_pair(act_val, active_func->activate(act_val));
 
 
 }
 
 
-MatrixType mlp_layer::compute_loss_gradient(const MatrixType & output, const VectorType & y)
+MatrixType mlp_layer::compute_loss_gradient(const MatrixType & output, const MatrixType & y)
 {
-    return loss_func->gradient(output, y);
+    return loss_func->gradient(output, &y);
 }
 
 MatrixType mlp_layer::backprop_loss_gradient(const MatrixType & delta)
 {
-    return (W.transpose()*delta);
+    return (delta * W.transpose() );
 }
 
 MatrixType mlp_layer::compute_delta(const MatrixType & activator,
@@ -112,7 +111,7 @@ bool mlp_layer::is_loss_contributor() const
     return bool(loss_func);
 }
 
-pair<MatrixType, VectorType> mlp_layer::compute_param_gradient(const MatrixType & input, const MatrixType & delta)
+pair<MatrixType, RowVectorType> mlp_layer::compute_param_gradient(const MatrixType & input, const MatrixType & delta)
 {
     //dWb_mat = delta*[self.layered_output{2*num_maps}', ones(N,1)];
 
@@ -127,8 +126,8 @@ pair<MatrixType, VectorType> mlp_layer::compute_param_gradient(const MatrixType 
 	VectorType diff_b = (VectorType) gDiffb;
 
 #else
-    MatrixType diff_W = delta*input.transpose();
-    VectorType diff_b = delta.rowwise().sum();
+    MatrixType diff_W = input.transpose() * delta;
+    RowVectorType diff_b = delta.colwise().sum();
 #endif
 
     return make_pair(diff_W, diff_b);

@@ -38,14 +38,13 @@ namespace artifact{
 
             vector<pair<MatrixType, MatrixType>> feed_forward(const MatrixType &input);
 
-            vector<pair<MatrixType, VectorType>> back_propagate(const MatrixType &input,
-                    const VectorType & y,
+            vector<pair<MatrixType, RowVectorType>> back_propagate(const MatrixType &input,
+                    const MatrixType & y,
                     const vector<pair<MatrixType, MatrixType>> &laywise_output);
 
         public:
 
             void add_layer(const mlp_layer &layer);
-
             void remove_layer(int pos);
 
             mlp_layer & get_layer(int pos);
@@ -66,18 +65,16 @@ namespace artifact{
 
             MatrixType predict(const MatrixType & X);
 
-            VectorType predict(const VectorType & x);
+            RowVectorType predict(const RowVectorType & x);
 
             virtual VectorType get_parameter();
             virtual void set_parameter(const VectorType &parameter_);
 
             virtual NumericType objective(const MatrixType & x,
-                    const VectorType & y);
-            /**
-            * partial output/partial param
-            */
+                    const MatrixType * y);
+
             virtual tuple<NumericType, VectorType> gradient(const MatrixType & x,
-                    const VectorType & y);
+                    const MatrixType * y);
 
 
         };
