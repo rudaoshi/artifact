@@ -96,3 +96,98 @@ MatrixType logistic_activator::gradient(const MatrixType & m,
 {
     return activated.array() * (1 - activated.array());
 }
+
+RowVectorType logistic_activator::activate(const RowVectorType & v)
+{
+#ifdef USE_GPU
+
+	return m.array().logistic();
+
+#elif defined USE_PARTIAL_GPU
+
+	return m.array().logistic();
+
+#else
+
+    return (1 + (-v).array().exp()).inverse();
+
+#endif
+}
+
+
+MatrixType logistic_activator::activate(const MatrixType & m)
+{
+#ifdef USE_GPU
+
+	return m.array().logistic();
+
+#elif defined USE_PARTIAL_GPU
+
+	return m.array().logistic();
+
+#else
+
+    return (1 + (-m).array().exp()).inverse();
+
+#endif
+}
+
+
+
+RowVectorType relu_activator::gradient(const RowVectorType & v)
+{
+    return (1 + (-v).array().exp()).inverse();
+}
+
+RowVectorType relu_activator::gradient(const RowVectorType & v,
+                                           const RowVectorType & activated)
+{
+    return (1 + (-v).array().exp()).inverse();
+}
+
+MatrixType relu_activator::gradient(const MatrixType & m)
+{
+    return (1 + (-m).array().exp()).inverse();
+}
+
+MatrixType relu_activator::gradient(const MatrixType & m,
+                                        const MatrixType & activated)
+{
+    return (1 + (-m).array().exp()).inverse();
+}
+
+RowVectorType relu_activator::activate(const RowVectorType & v)
+{
+#ifdef USE_GPU
+
+	return m.array().logistic();
+
+#elif defined USE_PARTIAL_GPU
+
+	return m.array().logistic();
+
+#else
+
+    return (1 + v.array().exp()).log();
+
+#endif
+}
+
+
+MatrixType relu_activator::activate(const MatrixType & m)
+{
+#ifdef USE_GPU
+
+	return m.array().logistic();
+
+#elif defined USE_PARTIAL_GPU
+
+	return m.array().logistic();
+
+#else
+
+    return (1 + m.array().exp()).log();
+
+#endif
+}
+

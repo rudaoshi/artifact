@@ -55,6 +55,20 @@ namespace artifact
                     const MatrixType & activated);
         };
 
+        class relu_activator: public activator
+        {
+        public:
+
+            virtual RowVectorType activate(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v);
+            virtual RowVectorType gradient(const RowVectorType & v,
+                                           const RowVectorType & activated);
+            virtual MatrixType activate(const MatrixType & m);
+            virtual MatrixType gradient(const MatrixType & m);
+            virtual MatrixType gradient(const MatrixType & m,
+                                        const MatrixType & activated);
+        };
+
         class softmax_activator: public activator
         {
         public:
